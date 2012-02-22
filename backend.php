@@ -38,13 +38,14 @@ function attempt_login() {
 	$salt = $db->get('farmers', 'salt', "email=$email") or failure('Could not find user');
 	$pass = make_password($_POST['password'], $salt);
 	
-	$db->select(array(
-			'table' => "users",
+	$response = $db->select(array(
+			'table' => "farmers",
+			'fields' => "farmId",
 			'condition' => "email=$email AND pass=$pass"
 		)) or failure('Could not log in');
 	
 	$response['status'] = 'success';
-	$response['data'] = array('user_token' => session_id());
+	$response['data'] = array('user_token' => session_id(), 'farmId' => $response['farmId']);
 	
 }
 
@@ -55,6 +56,7 @@ function register_user() {
 	$email = $_POST['email'];
 	$salt = generate_salt();
 	$PIN = make_password($_POST['PIN'], $salt);
+	$farmId = $_SESSION['farmId'];
 	
 	$db->insert('users', array(
 			'email' => $email,
