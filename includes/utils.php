@@ -1,6 +1,6 @@
 <?php
 
-if ($_REQUEST['SESSION']) {
+if (isset($_REQUEST['SESSION']) ){
 	print "nope.";
 	exit(999);
 }
