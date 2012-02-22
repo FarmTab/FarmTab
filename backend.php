@@ -59,6 +59,7 @@ function register_user() {
 	$db->insert('users', array(
 			'email' => $email,
 			'PIN' => $PIN,
+			'salt' => $salt,
 			'farmId' => $farmId
 	)) or failure('could not insert');
 	
