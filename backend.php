@@ -14,7 +14,7 @@ if (isset($_POST['type')) {
 			attempt_login();
 			break;
 		case 'transaction':
-			process_transaction($_POST['userId'], $_POST['amount']); // needs moar security
+			process_transaction($_POST['userId'], $_POST['amount'], $_POST['token']);
 			break;
 		case 'userlist':
 			get_users($_POST['farmId']);
@@ -102,8 +102,26 @@ function get_balance($userId) {
 	$response['data'] = array('balance' => $bal);
 }
 
-function process_transaction($userId, $amount) {
+function setToken($userId) {
+	$_SESSION['token_timestamp'] = time();
+	$_SESSION['token'] = uniqid($userId);
+	return $_SESSION['token'];	
+}
+
+function checkToken($token) {
+	if ($token !== $_SESSION['token'])
+		return false;
+	if (time() - $_SESSION['token_timestamp'] > 120000) // 2 minutes timeout
+		return false;
+	return true;
+}
+
+
+function process_transaction($userId, $amount, $token) {
 	$db = new mysql();
+	
+	if (!checkToken($token))
+		failure('token mismatch failure');
 	
 	$currentBal = $db->get('users', 'balance', "userId=$userId");
 	
@@ -129,8 +147,10 @@ function validate_pin($userId, $PIN) {
 	if ($PIN1 !== $PIN2)
 		failure('Authentication failure, PIN invalid');
 		
+	$token = setToken($userId);
+		
 	$response['status'] = 'success';
-	$response['data'] = array('balance' => $result['balance']);	
+	$response['data'] = array('balance' => $result['balance'], 'token' => $token);	
 }
 
 
