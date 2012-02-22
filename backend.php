@@ -14,9 +14,8 @@ if (isset($_POST['type')) {
 			attempt_login();
 			break;
 		case 'userlist':
-			// something else
+			get_users($_POST['farmId']);
 			break;
-	
 	}
 	
 	print json_encode($response);
@@ -30,19 +29,17 @@ function attempt_login() {
 	
 	// db function validates, no worries about injections
 	$email = $_POST['email'];
-	$pass = sha1($_POST['password']);
+	$salt = $db->get('users', 'salt', "email=$email") or failure('Could not find user');
+	$pass = make_password($_POST['password'], $salt);
 	
 	$db->select(array(
 			'table' => "users",
 			'condition' => "email=$email AND pass=$pass"
-		));
+		)) or failure('Could not log in');
 	
-	if (logged_in) {
-		array_push($response, array('response' => 'success'));
-		array_push($response, array('user_token' => session_id()));
-	} else {
-		array_push($response array('response' => 'failure'));
-	}
+	$response['status'] = 'success';
+	$response['data'] = array('user_token' => session_id());
+	
 }
 
 function register_user() {
@@ -50,20 +47,49 @@ function register_user() {
 	$db = new mysql();
 
 	$email = $_POST['email'];
-	$pass = sha1($_POST['password']);
+	$salt = generate_salt();
+	$pass = make_password($_POST['password'], salt);
 	
 	$db->insert(array(
 			'email' => $email,
-			'pass' => $pass"
-	));
+			'pass' => $pass
+	)) or failure('could not insert');
 }
 
-function get_users() {
-	if ($_POST['user_token'] !== session_id()) {
-		array_push($response, array('response' => 'failure'));
-		array_push($response, array('reason' => 'authentication failure'));
-	}
+function get_users($farmId) {
+	if ($_POST['user_token'] !== session_id())
+		failure('authentication failure');
+	
+	$db = new mysql();
+	
+	$users = $db->select(array(
+		'table' => "farmers",
+		'condition' => "farmId=$farmId"
+	));
+	
+	if (!$users)
+		failure('could not fetch users');
+			
+	$response['status'] = 'success';
+	$response['data'] = $users;
 
+}
+
+function get_balance($userId) {
+	$db = new mysql();
+	
+	$bal = $db->get('users','balance', "userId = $userId");
+	
+	$response['status'] = 'success';
+	$response['data'] = array('balance' => $bal);
+}
+
+
+function failure($message) {
+	$response['status'] = 'failure';
+	$response['reason'] = $message;
+	print json_encode($response);
+	exit(9);
 }
 
 

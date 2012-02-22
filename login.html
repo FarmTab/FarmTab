@@ -14,18 +14,17 @@
 
 	<div data-role="header">
 		<img src="img/carrot.png" class="ui-btn-left" alt="" height="30px"/>
-		<h1>Login to Farm Tab</h1>
+		<h1>Farmer Login</h1>
 	</div><!-- /header -->
 
 	<div data-role="content">
-		<form id="form1" method="post" action="userlist.html" autocomplete="off" data-ajax="false">
+		<form id="form1" method="post" action="backend.php" autocomplete="off" data-ajax="false">
 			<label for="email" class="ui-hidden-accessible">Email</label>
 			<input id="email" name="email" type="email" placeholder="Email" required />
 			<label for="password" class="ui-hidden-accessible">Password</label>
 			<input id="password" name="password" class="password" placeholder="Password" required />
-			<!-- <input type="submit" value="Sign up" /> -->
-			<!-- disable login for now. Sorry guys -->
-			<a href="#alert" data-role="button" data-inline="true" data-rel="dialog" data-transition="pop">Sign in</a>
+			<input type="hidden" name="type" value ="login" />
+			<input type="submit" value="Sign up" />
 		</form>
 	</div><!-- /content -->
 </div><!-- /page -->
@@ -46,13 +45,21 @@
 <script type="text/javascript">
 $( '#aboutPage' ).live( 'pageinit',function(event){
 
+
+	var API_KEY = "124df26asdf";
+	var user_token;
+	
+
+
+
 	$("#form1").submit(function() {
 
 		var action = $(this).attr('action');
 		var form_data = {
 			email: $("#email").val(),
 			password: $("#password").val(),
-			is_ajax: 1
+			api_key: API_KEY,
+			type: "login"
 		};
 
 		$.ajax({
@@ -61,12 +68,13 @@ $( '#aboutPage' ).live( 'pageinit',function(event){
 			data: form_data,
 			success: function(response)
 			{
-				if(response == 'success')
+				if(response['status'] == 'success') {
+					user_token = response['user_token'];
 					$("#login").slideUp('slow', function() {
 						$.mobile.changePage("userlist.html");
 					});
-				else
-					$.mobile.changePage( "../alerts/confirm.html", {
+				} else
+					$.mobile.changePage( "#alert", {
 						transition: "pop",
 						reverse: false,
 						changeHash: false
