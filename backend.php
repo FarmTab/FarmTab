@@ -6,6 +6,7 @@ require_once('includes/utils.php');
 session_start();
 $response = array();
 
+header('Content-Type: application/json charset=UTF-8');
 
 if (isset($_POST['type')) {
 
