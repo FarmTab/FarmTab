@@ -166,15 +166,4 @@ function validate_pin($userId, $PIN) {
 	$response['data'] = array('balance' => $result['balance'], 'token' => $token);	
 }
 
-
-function failure($message) {
-	$response['status'] = 'failure';
-	$response['reason'] = $message;
-	print json_encode($response);
-	log('failure: ' . $message . implode(', ', $_POST));
-	exit(9);
-}
-
-
-
 ?>
