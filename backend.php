@@ -12,7 +12,10 @@ if (isset($_POST['type')) {
 
 	switch($_POST['type']) {
 		case 'login':
-			attempt_login();
+			attempt_login($_POST['email'], $_POST['password']);
+			break;
+		case 'logout':
+			logout_farmer();
 			break;
 		case 'transaction':
 			process_transaction($_POST['userId'], $_POST['amount'], $_POST['token']);
@@ -30,24 +33,33 @@ if (isset($_POST['type')) {
 }
 
 
-function attempt_login() {
+function attempt_login($email, $pass) {
 
 	$db = new mysql();
 	
 	// db function validates, no worries about injections
-	$email = $_POST['email'];
 	$salt = $db->get('farmers', 'salt', "email=$email") or failure('Could not find user');
-	$pass = make_password($_POST['password'], $salt);
+	$hashedPass = make_password($pass, $salt);
 	
 	$response = $db->select(array(
 			'table' => "farmers",
 			'fields' => "farmId",
-			'condition' => "email=$email AND pass=$pass"
+			'condition' => "email=$email AND pass=$hashedPass"
 		)) or failure('Could not log in');
+	
+	
+	session_regenerate_id (); // for security
+    	$_SESSION['valid'] = true;
+    	$_SESSION['farmId'] = $response['farmId'];
 	
 	$response['status'] = 'success';
 	$response['data'] = array('user_token' => session_id(), 'farmId' => $response['farmId']);
 	
+}
+
+function logout_farmer() {
+	$_SESSION = array();
+    	session_destroy();
 }
 
 function register_user() {
