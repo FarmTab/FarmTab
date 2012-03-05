@@ -62,18 +62,24 @@ function logout_farmer() {
     	session_destroy();
 }
 
-function register_user() {
+function checkLogin() {
+	if !(isset($_SESSION['valid']) && $_SESSION['valid'])
+		failure('Authentication error');
+}
+
+function register_user($email, $PIN) {
+	
+	checkLogin();
 
 	$db = new mysql();
 
-	$email = $_POST['email'];
 	$salt = generate_salt();
-	$PIN = make_password($_POST['PIN'], $salt);
+	$hashedPIN = make_password($PIN, $salt);
 	$farmId = $_SESSION['farmId'];
 	
 	$db->insert('users', array(
 			'email' => $email,
-			'PIN' => $PIN,
+			'PIN' => $hashedPIN,
 			'salt' => $salt,
 			'farmId' => $farmId
 	)) or failure('could not insert');
@@ -85,8 +91,8 @@ function register_user() {
 }
 
 function get_users($farmId) {
-	if ($_POST['user_token'] !== session_id())
-		failure('authentication failure');
+	
+	checkLogin();
 	
 	$db = new mysql();
 	
@@ -104,6 +110,9 @@ function get_users($farmId) {
 }
 
 function get_balance($userId) {
+	
+	checkLogin();
+	
 	$db = new mysql();
 	
 	$bal = $db->get('users','balance', "userId = $userId");
@@ -131,6 +140,9 @@ function checkToken($token) {
 
 
 function process_transaction($userId, $amount, $token) {
+	
+	checkLogin();
+	
 	$db = new mysql();
 	
 	if (!checkToken($token))
@@ -147,6 +159,9 @@ function process_transaction($userId, $amount, $token) {
 }
 
 function validate_pin($userId, $PIN) {
+	
+	checkLogin();
+	
 	$db = new mysql();
 	
 	$result = $db->row(array(
