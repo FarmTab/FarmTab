@@ -1,4 +1,3 @@
-
 <!DOCTYPE html> 
 <html> 
 	<head> 
@@ -20,7 +19,7 @@
 	</div><!-- /header -->
 
 	<div data-role="content">	
-		<ul id="userlist" data-role="listview" data-filter="true" data-inset="true">
+		<ul data-role="listview" data-filter="true" data-inset="true">
 			
 		</ul>
 		
@@ -45,7 +44,6 @@ $.ajax({
 
 function render(response) {
 	console.log("Status: " + response.status);
-	console.dir(response.data);
 	$.each(response.data, function() {
 		var user = this;
 		var userId = user['id'];
@@ -53,7 +51,7 @@ function render(response) {
 		var imgUrl = user['img_url'];
 		var balance = user['balance'];
 	
-		$('#userlist').append(
+		$('ul').append(
 			'<li><a href="verify.php?id=' + userId + '">' +
 				'<img src="img/' + imgUrl + '" />' +
 				'<h3>' + name + '</h3>' +
@@ -61,6 +59,7 @@ function render(response) {
 			'</a></li>'
 		);
 	});
+	$('ul').listview('refresh');
 }
 </script>
 
