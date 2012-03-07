@@ -9,9 +9,9 @@ $response = array();
 
 header('Content-Type: application/json charset=UTF-8');
 
-if (isset($_POST['type'])) {
+if (isset($_GET['type'])) {
 
-	switch($_POST['type']) {
+	switch($_GET['type']) {
 		case 'login':
 			attempt_login($_POST['email'], $_POST['password']);
 			break;
@@ -22,7 +22,7 @@ if (isset($_POST['type'])) {
 			process_transaction($_POST['userId'], $_POST['transaction'], $_POST['token']);
 			break;
 		case 'userlist':
-			get_users($_POST['farmId']);
+			get_users($_GET['farmId']);
 			break;
 		case 'validate':
 			validate_pin($_POST['userId'], $_POST['pin']);
@@ -105,8 +105,11 @@ function get_users($farmId) {
 	$ids = $db->select(array(
 		'table' => "farm_x_user",
 		'fields' => "user_id",
-		'condition' => "farmId = $farmId"
-	));
+		'condition' => "farm_id = $farmId"
+	)) or failure('invalid farm id');
+	
+	print json_encode($ids);
+	exit();
 	
 	$users = $db->select(array(
 		'table' => "user",

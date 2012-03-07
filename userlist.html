@@ -32,21 +32,34 @@
 </body>
 
 <script type="text/javascript">
-$.getJSON('backend.php' post = farmid....) success: function(data) {
-	$.each(data, function() {
-		var name = data['name'];
-		var imgurl = data['imgurl'];
-		var balance = data['balance'];
+
+var api_key = '124df26asdf';
+var farmId = 1; // nur for test
+
+$.ajax({
+	url: 'backend.php?type=userlist',
+	dataType: 'json',
+	data: {'farmId':farmId, 'api_key':api_key},
+	success: render
+});
+
+function render(user) {
+	console.log(user);
+	$.each(user, function() {
+		var userId = user['id'];
+		var name = user['name'];
+		var imgurl = user['imgurl'];
+		var balance = user['balance'];
 	
 		$('#userlist').append(
-			"<li><a href="verify.php?name=Dickson Despommier&&id=0">
-				<img src="img/0.jpg" />
-				<h3>Alejandro Watts</h3>
-				<p>" + balance + "</p>
-			</a></li>"
+			'<li><a href="verify.php?name=' + name +
+				'&id=' + userId + '">' +
+				'<img src="' + imgurl + '" />' +
+				'<h3>' + name + '</h3>' +
+				'<p>' + balance + '</p>' +
+			'</a></li>'
 		);
 	});
-
 }
 </script>
 
