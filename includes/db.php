@@ -55,9 +55,11 @@ class mysql {
 		$options = array_merge($default,$options);
 		$sql = "SELECT {$options['fields']} FROM {$options['table']} WHERE {$options['condition']} ORDER BY {$options['order']} LIMIT {$options['limit']}";
 		$result = $this->query($sql);
-		if (empty($result)) return false;
-		else if (count($result) == 1) return $result[0][$options['table']];
-		else return $result;
+		
+		foreach ($result as $r) {
+			$output[] = $r[$options['table']];
+		}
+		return $output;
 	}
 	function row($options) {
 		$default = array (

@@ -107,20 +107,28 @@ function get_users($farmId) {
 	
 	$db = new mysql();
 	
-	$ids = $db->select(array(
+	$user_ids = $db->select(array(
 		'table' => "farm_x_user",
 		'fields' => "user_id",
 		'condition' => "farm_id = $farmId"
 	)) or failure('invalid farm id');
-		
+	
+	
+	$ids = "('";
+	foreach ($user_ids as $id) {
+		if ($multi)
+			$ids .= "',";
+		$ids .= $id['user_id'];
+		$multi = true;
+	}
+	$ids .= "')";
+	
+			
 	$users = $db->select(array(
 		'table' => "user",
 		'fields' => "id, name, balance, img_url",
-		'condition' => "`id` IN ('" . implode("','", $ids) . "')"
-	));
-	
-	if (!$users)
-		failure('could not fetch users');
+		'condition' => "`id` IN " . $ids
+	)) or failure('could not fetch users');
 			
 	$response['status'] = 'success';
 	$response['data'] = $users;
