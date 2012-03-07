@@ -107,14 +107,11 @@ function get_users($farmId) {
 		'fields' => "user_id",
 		'condition' => "farm_id = $farmId"
 	)) or failure('invalid farm id');
-	
-	print json_encode($ids);
-	exit();
-	
+		
 	$users = $db->select(array(
 		'table' => "user",
-		'fields' => "",
-		'condition' => '`id` IN ' . implode(", ", $ids)
+		'fields' => "id, name, balance, img_url",
+		'condition' => "`id` IN ('" . implode("','", $ids) . "')"
 	));
 	
 	if (!$users)
