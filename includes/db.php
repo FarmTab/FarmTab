@@ -54,14 +54,7 @@ class mysql {
 		);
 		$options = array_merge($default,$options);
 		$sql = "SELECT {$options['fields']} FROM {$options['table']} WHERE {$options['condition']} ORDER BY {$options['order']} LIMIT {$options['limit']}";
-		$result = $this->query($sql);
-		
-		if (!$result) return false;
-		
-		foreach ($result as $r) {
-			$output[] = $r[$options['table']];
-		}
-		return $output;
+		return $this->query($sql, false, false);
 	}
 	function row($options) {
 		$default = array (
