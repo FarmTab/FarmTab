@@ -129,7 +129,7 @@ function link_user($userId, $farmId) {
 
 function get_users($farmId) {
 	
-	//checkLogin();
+	checkLogin();
 	
 	$db = new mysql();
 	
