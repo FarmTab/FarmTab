@@ -1,0 +1,99 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Transaction</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+	<link rel="stylesheet" href="ft_mobile.css" />
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+	
+	
+	<script type="text/javascript" >
+	
+	
+	
+	</script>
+	
+
+</head> 
+<body class="transaction"> 
+<div data-role="page" id="checkout">
+
+	<div data-role="header">
+		<img src="img/carrot.png" class="ui-btn-left" alt="" height="30px"/>
+		<a href="userlist.html" data-icon="home" data-iconpos="notext" data-direction="reverse" class="ui-btn-right jqm-home">Home</a>
+		<h1>Transaction</h1>
+	</div><!-- /header -->
+
+	<div data-role="content">	
+		<h3></h3>	
+		<form id="modifycredit" method="post" data-ajax="false">
+
+			<label for="amount" class="ui-hidden-accessible">Amount</label>
+			<input name="amount" type="number" pattern="^\d*(\.\d{2}$)?" size="4" placeholder="Amount" required="required"/>
+	
+			<fieldset class="ui-grid-a">
+				<div class="ui-block-a"><button type="submit" data-theme="d" name="credit-type" value="add">Add</button></div>
+				<div class="ui-block-b"><button type="submit" data-theme="a" name="credit-type" value="withdraw">Withdraw</button></div>
+	    	</fieldset>	
+		</form>
+
+	</div><!-- /content -->
+
+</div><!-- /page -->
+
+<div id="pin_entry" data-role="page">
+	
+		<div data-role="header" data-theme="d">
+			<h1>Enter Your Farm Tab PIN</h1>
+
+		</div>
+		
+		<div data-role="content">
+		<form name="pay" method="post" autocomplete="off" data-ajax="false">
+			<p><?= $_GET['name']; ?>, please enter PIN to confirm payment of $<?= $_GET['amount']; ?></p>
+			<input type="hidden" name="amount" value="<?= $_GET['amount'] ?>" />
+			<label for="pin" class="ui-hidden-accessible">PIN</label>
+			<input id="pin" name="pin" class="pin" maxlength="4" size="4" type="number" placeholder="4-digit PIN" required />
+			
+			<input type="checkbox" checked="true" name="facebook" id="facebook" class="custom" />
+			<label for="facebook">Post to Facebook</label>
+
+			<input type="submit" value="Confirm" />
+		</form>
+	</div><!-- /content -->
+
+	</div>
+</body>
+
+
+</body>
+<script type="text/javascript" src="scripts/ft_core.js"></script>
+<script type="text/javascript">
+
+$('h3').html(GET['name'] + ' <span class="balance">$' + GET['balance'] + '</span>');
+
+
+$('#modifycredit').submit(function() {
+	
+});
+
+$('form[name="pay"]').submit(function() {
+	transaction['amount'] = $('input[name="amount"]').text(); // will this work? probably not .. context switch and all that
+	transaction['farm'] = farmId;
+	transaction['user'] = userId;
+	$.ajax({
+		url: 'backend.php?type=transaction',
+		dataType: 'json',
+		data: transaction, 
+		success: function(response) {
+		
+		}
+	})
+		
+});
+
+</script>
+
+</html>
