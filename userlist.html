@@ -30,6 +30,7 @@
 
 </body>
 
+<script type="text/javascript" src="scripts/ft_core.js"></script>
 <script type="text/javascript">
 
 var api_key = '124df26asdf';
@@ -52,7 +53,7 @@ function render(response) {
 		var balance = user['balance'];
 	
 		$('ul').append(
-			'<li><a href="verify.php?id=' + userId + '">' +
+			'<li><a href="transaction?id=' + userId + '&name=' + name + '&balance=' + balance +'">' +
 				'<img src="img/' + imgUrl + '" />' +
 				'<h3>' + name + '</h3>' +
 				'<p>' + balance + '</p>' +
