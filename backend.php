@@ -58,7 +58,6 @@ function attempt_login($email, $pass) {
 	
 	$response['status'] = 'success';
 	$response['data'] = array(
-			'user_token' => session_id(),
 			'farmId' => $response['id']
 	);
 	return $response;
@@ -135,13 +134,13 @@ function get_users($farmId) {
 	$db = new mysql();
 	
 	$users_query =
-				"SELECT user.id, user.name, user.img_url, tab.balance
-				FROM user
-				INNER JOIN farm_x_user fx
-				    ON fx.user_id = user.id
-				INNER JOIN tab
-				    ON tab.user_id = user.id AND tab.farm_id = $farmId
-				WHERE fx.farm_id = $farmId";
+			"SELECT user.id, user.name, user.img_url, tab.balance
+			FROM user
+			INNER JOIN farm_x_user fx
+			    ON fx.user_id = user.id
+			INNER JOIN tab
+			    ON tab.user_id = user.id AND tab.farm_id = $farmId
+			WHERE fx.farm_id = $farmId";
 	$users = $db->query($users_query, false, false);
 			
 	$response['status'] = 'success';
