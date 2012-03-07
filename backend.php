@@ -1,6 +1,7 @@
 <?php
 
 require_once('includes/db.php');
+require_once('includes/secrets.php');
 require_once('includes/utils.php');
 
 session_start();
@@ -18,13 +19,13 @@ if (isset($_POST['type')) {
 			logout_farmer();
 			break;
 		case 'transaction':
-			process_transaction($_POST['userId'], $_POST['amount'], $_POST['token']);
+			process_transaction($_POST['userId'], $_POST['transaction'], $_POST['token']);
 			break;
 		case 'userlist':
 			get_users($_POST['farmId']);
 			break;
 		case 'validate':
-			validate_pin($_POST['userId'], $_POST['PIN']);
+			validate_pin($_POST['userId'], $_POST['pin']);
 			break;
 	}
 	
@@ -38,30 +39,31 @@ function attempt_login($email, $pass) {
 	$db = new mysql();
 	
 	// db function validates, no worries about injections
-	$salt = $db->get('farmers', 'salt', "email=$email") or failure('Could not find user');
+	$salt = $db->get('farm', 'salt', "email=$email") or failure('Could not find farmer');
 	$hashedPass = make_password($pass, $salt);
 	
 	$response = $db->select(array(
-			'table' => "farmers",
-			'fields' => "farmId",
+			'table' => "farm",
+			'fields' => "id",
 			'condition' => "email=$email AND pass=$hashedPass"
 		)) or failure('Could not log in');
 	
 	
 	session_regenerate_id (); // for security
-    	$_SESSION['valid'] = true;
-    	$_SESSION['farmId'] = $response['farmId'];
+    $_SESSION['valid'] = true;
+    $_SESSION['farmId'] = $response['id'];
 	
 	$response['status'] = 'success';
-	$response['data'] = array('user_token' => session_id(),
-								'farmId' => $response['farmId']
-							);
+	$response['data'] = array(
+			'user_token' => session_id(),
+			'farmId' => $response['id']
+	);
 	
 }
 
 function logout_farmer() {
 	$_SESSION = array();
-    	session_destroy();
+    session_destroy();
 }
 
 function checkLogin() {
@@ -69,24 +71,26 @@ function checkLogin() {
 		failure('Authentication error');
 }
 
-function register_user($email, $PIN) {
+function register_user($email, $pin) {
 	
 	checkLogin();
 
 	$db = new mysql();
 
 	$salt = generate_salt();
-	$hashedPIN = make_password($PIN, $salt);
+	$hashedPin = make_password($pin, $salt);
 	$farmId = $_SESSION['farmId'];
 	
-	$db->insert('users', array(
+	$userId = $db->insert('user', array(
 			'email' => $email,
-			'PIN' => $hashedPIN,
-			'salt' => $salt,
-			'farmId' => $farmId
+			'pin' => $hashedPin,
+			'salt' => $salt
 	)) or failure('could not insert');
 	
-	$userId = $db->get('users', 'userId', "email=$email");
+	$db->insert('farm_x_user', array(
+			'farm_id' => $farmId,
+			'user_id' => $userId
+	));
 	
 	$response['status'] = 'success';
 	$response['data'] = array('userId' => $userId);
@@ -98,9 +102,16 @@ function get_users($farmId) {
 	
 	$db = new mysql();
 	
-	$users = $db->select(array(
-		'table' => "users",
+	$ids = $db->select(array(
+		'table' => "farm_x_user",
+		'fields' => "user_id",
 		'condition' => "farmId = $farmId"
+	));
+	
+	$users = $db->select(array(
+		'table' => "user",
+		'fields' => "",
+		'condition' => '`id` IN ' . implode(", ", $ids)
 	));
 	
 	if (!$users)
@@ -117,7 +128,7 @@ function get_balance($userId) {
 	
 	$db = new mysql();
 	
-	$bal = $db->get('users','balance', "userId = $userId");
+	$bal = $db->get('user','balance', "id = $userId");
 	
 	if (!$bal)
 		failure('could not find user balance');
@@ -127,8 +138,14 @@ function get_balance($userId) {
 }
 
 function setToken($userId) {
+
+	$agent = $_SERVER['HTTP_USER_AGENT'];
+	$agent .= 'SHIFLETT';
+
+	$token = md5($agent . $token_secret . $userId);
+
 	$_SESSION['token_timestamp'] = time();
-	$_SESSION['token'] = uniqid($userId);
+	$_SESSION['token'] = $token;
 	return $_SESSION['token'];	
 }
 
@@ -141,7 +158,7 @@ function checkToken($token) {
 }
 
 
-function process_transaction($userId, $amount, $token) {
+function process_transaction($userId, $transaction, $token) {
 	
 	checkLogin();
 	
@@ -150,29 +167,39 @@ function process_transaction($userId, $amount, $token) {
 	if (!checkToken($token))
 		failure('token mismatch failure');
 	
-	$currentBal = $db->get('users', 'balance', "userId=$userId");
+	$currentBal = $db->get('user', 'balance', "userId=$userId");
 	
-	$newBal = $currentBal - $amount;
+	$newBal = $currentBal - $transaction['amount'];
 	
 	if ($newBal <= 0)
 		failure('Balance too low to process transaction');
+		
+	$transactionId = $db->insert('transaction', $transaction);
 	
-	$db->update('users', array('balance' => $newBal), "userId=$userId");
+	$db->insert('user_x_transaction', array(
+					'user_id' => $userId,
+					'transaction_id' => $transactionId
+	));
+	
+	$db->update('user', array('balance' => $newBal), "id=$userId");
+	
+	$response['status'] = "success";
+	$response['data'] = 
 }
 
-function validate_pin($userId, $PIN) {
+function validate_pin($userId, $pin) {
 	
 	checkLogin();
 	
 	$db = new mysql();
 	
 	$result = $db->row(array(
-			'table' => "users",
-			'fields' => "PIN, salt, balance",
+			'table' => "user",
+			'fields' => "pin, salt, balance",
 			'condition' => "userId=$userId"
 		)) or failure('Could not find user');
-	$PIN1 = $result['PIN'];
-	$PIN2 = make_password($_POST['PIN'], $result['salt']);
+	$PIN1 = $result['pin'];
+	$PIN2 = make_password($pin, $result['salt']);
 	
 	if ($PIN1 !== $PIN2)
 		failure('Authentication failure, PIN invalid');
