@@ -1,0 +1,8 @@
+DirectoryIndex userlist.html
+<IfModule mod_rewrite.c>
+   Options +FollowSymLinks
+   Options +Indexes
+   RewriteEngine On
+   RewriteCond %{SCRIPT_FILENAME} !-d
+   RewriteRule ^([^\.]+)$ $1.html [NC,L]
+</IfModule>
