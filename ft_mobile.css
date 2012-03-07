@@ -1,0 +1,22 @@
+/*****************************************
+	CSS definitions for FarmTab mobile
+	by Adam Krebs
+*****************************************/
+
+input.pin, input.password {
+	-webkit-text-security: disc;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/*********************
+	for transaction
+*********************/
+input.total {
+/*	height:3em; */
+}
