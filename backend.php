@@ -9,7 +9,7 @@ $response = array();
 
 header('Content-Type: application/json charset=UTF-8');
 
-if (isset($_POST['type')) {
+if (isset($_POST['type'])) {
 
 	switch($_POST['type']) {
 		case 'login':
@@ -67,7 +67,7 @@ function logout_farmer() {
 }
 
 function checkLogin() {
-	if !(isset($_SESSION['valid']) && $_SESSION['valid'])
+	if (!isset($_SESSION['valid']) && $_SESSION['valid'])
 		failure('Authentication error');
 }
 
@@ -98,7 +98,7 @@ function register_user($email, $pin) {
 
 function get_users($farmId) {
 	
-	checkLogin();
+	//checkLogin();
 	
 	$db = new mysql();
 	
@@ -142,7 +142,7 @@ function setToken($userId) {
 	$agent = $_SERVER['HTTP_USER_AGENT'];
 	$agent .= 'SHIFLETT';
 
-	$token = md5($agent . $token_secret . $userId);
+	$token = md5($agent . secrets::TOKEN_SECRET . $userId);
 
 	$_SESSION['token_timestamp'] = time();
 	$_SESSION['token'] = $token;
@@ -184,7 +184,7 @@ function process_transaction($userId, $transaction, $token) {
 	$db->update('user', array('balance' => $newBal), "id=$userId");
 	
 	$response['status'] = "success";
-	$response['data'] = 
+	$response['data'] = array('balance' => $newBal);
 }
 
 function validate_pin($userId, $pin) {
