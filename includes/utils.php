@@ -17,20 +17,20 @@ function check_api_key($apiKey) {
 	return $db->get('api_clients', 'client_name', "api_key = '$apiKey'");
 }
 
-function make_password($pass, $salt=generateSalt()) {
+function make_password($pass, $salt) {
 	return base64_encode(sha1($pass . $salt, true) . $salt);
 }
 	
 	
 /** @author AfroSoft <info@afrosoft.tk> */
-function generateSalt($max = 15) {
+function generateSalt() {
 	$characterList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	$i = 0;
 	$salt = "";
 	do {
 		$salt .= $characterList{mt_rand(0,strlen($characterList)-1)};
 		$i++;
-	} while ($i < $max);
+	} while ($i < 15);
 	return $salt;
 }
 

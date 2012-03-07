@@ -53,7 +53,9 @@ function attempt_login($email, $pass) {
     	$_SESSION['farmId'] = $response['farmId'];
 	
 	$response['status'] = 'success';
-	$response['data'] = array('user_token' => session_id(), 'farmId' => $response['farmId']);
+	$response['data'] = array('user_token' => session_id(),
+								'farmId' => $response['farmId']
+							);
 	
 }
 
