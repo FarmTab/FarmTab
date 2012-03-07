@@ -5,7 +5,7 @@ require_once('includes/secrets.php');
 require_once('includes/utils.php');
 
 session_start();
-$response = array();
+static $response = array();
 
 header('Content-Type: application/json charset=UTF-8');
 
@@ -13,19 +13,19 @@ if (isset($_GET['type'])) {
 
 	switch($_GET['type']) {
 		case 'login':
-			attempt_login($_POST['email'], $_POST['password']);
+			$response = attempt_login($_POST['email'], $_POST['password']);
 			break;
 		case 'logout':
-			logout_farmer();
+			$response = logout_farmer();
 			break;
 		case 'transaction':
-			process_transaction($_POST['userId'], $_POST['transaction'], $_POST['token']);
+			$response = process_transaction($_POST['userId'], $_POST['transaction'], $_POST['token']);
 			break;
 		case 'userlist':
-			get_users($_GET['farmId']);
+			$response = get_users($_GET['farmId']);
 			break;
 		case 'validate':
-			validate_pin($_POST['userId'], $_POST['pin']);
+			$response = validate_pin($_POST['userId'], $_POST['pin']);
 			break;
 	}
 	
@@ -58,17 +58,20 @@ function attempt_login($email, $pass) {
 			'user_token' => session_id(),
 			'farmId' => $response['id']
 	);
-	
+	return $response;
 }
 
 function logout_farmer() {
 	$_SESSION = array();
     session_destroy();
+    $response['status'] = "success";
+    return $response;
 }
 
 function checkLogin() {
 	if (!isset($_SESSION['valid']) && $_SESSION['valid'])
 		failure('Authentication error');
+	return true;
 }
 
 function register_user($email, $pin) {
@@ -94,6 +97,8 @@ function register_user($email, $pin) {
 	
 	$response['status'] = 'success';
 	$response['data'] = array('userId' => $userId);
+	
+	return $response;
 }
 
 function get_users($farmId) {
@@ -119,7 +124,8 @@ function get_users($farmId) {
 			
 	$response['status'] = 'success';
 	$response['data'] = $users;
-
+	
+	return $response;
 }
 
 function get_balance($userId) {
@@ -135,6 +141,8 @@ function get_balance($userId) {
 	
 	$response['status'] = 'success';
 	$response['data'] = array('balance' => $bal);
+	
+	return $response;
 }
 
 function setToken($userId) {
@@ -185,6 +193,8 @@ function process_transaction($userId, $transaction, $token) {
 	
 	$response['status'] = "success";
 	$response['data'] = array('balance' => $newBal);
+	
+	return $response;
 }
 
 function validate_pin($userId, $pin) {
@@ -207,7 +217,12 @@ function validate_pin($userId, $pin) {
 	$token = setToken($userId);
 		
 	$response['status'] = 'success';
-	$response['data'] = array('balance' => $result['balance'], 'token' => $token);	
+	$response['data'] = array(
+		'balance' => $result['balance'],
+		'token' => $token
+	);	
+	
+	return $response; 
 }
 
 ?>
