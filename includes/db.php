@@ -56,8 +56,8 @@ class mysql {
 		$sql = "SELECT {$options['fields']} FROM {$options['table']} WHERE {$options['condition']} ORDER BY {$options['order']} LIMIT {$options['limit']}";
 		$result = $this->query($sql);
 		if (empty($result)) return false;
-		$tablename = $options['table'];
-		return $result[0][$tablename]; // needs support for more than 1 table?
+		else if (count($result) == 1) return $result[0][$options['table']];
+		else return $result;
 	}
 	function row($options) {
 		$default = array (
