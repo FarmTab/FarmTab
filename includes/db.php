@@ -56,6 +56,8 @@ class mysql {
 		$sql = "SELECT {$options['fields']} FROM {$options['table']} WHERE {$options['condition']} ORDER BY {$options['order']} LIMIT {$options['limit']}";
 		$result = $this->query($sql);
 		
+		if (!$result) return false;
+		
 		foreach ($result as $r) {
 			$output[] = $r[$options['table']];
 		}

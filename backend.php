@@ -5,7 +5,7 @@ require_once('includes/secrets.php');
 require_once('includes/utils.php');
 
 session_start();
-static $response = array();
+$response = array();
 
 header('Content-Type: application/json charset=UTF-8');
 
@@ -15,8 +15,11 @@ if (isset($_GET['type'])) {
 		case 'login':
 			$response = attempt_login($_POST['email'], $_POST['password']);
 			break;
-		case 'logout':
-			$response = logout_farmer();
+		case 'register':
+			$response = register_user($_POST['email'], $_POST['pin'], $_POST['farmId']);
+			break;
+		case 'linkuser':
+			$response = link_user($_GET['userId'],$_GET['farmId']);
 			break;
 		case 'transaction':
 			$response = process_transaction($_POST['userId'], $_POST['transaction'], $_POST['token']);
@@ -61,34 +64,58 @@ function attempt_login($email, $pass) {
 	return $response;
 }
 
-function logout_farmer() {
-	$_SESSION = array();
-    session_destroy();
-    $response['status'] = "success";
-    return $response;
-}
-
 function checkLogin() {
 	if (!isset($_SESSION['valid']) && $_SESSION['valid'])
 		failure('Authentication error');
 	return true;
 }
 
-function register_user($email, $pin) {
-	
+function register_user($email, $pin, $farmId) {
 	checkLogin();
 
 	$db = new mysql();
+	
+	if ($farmId != $_SESSION['farmId'])
+		failure("can't register users to farms you don't own.");
 
 	$salt = generate_salt();
 	$hashedPin = make_password($pin, $salt);
-	$farmId = $_SESSION['farmId'];
 	
 	$userId = $db->insert('user', array(
 			'email' => $email,
 			'pin' => $hashedPin,
 			'salt' => $salt
-	)) or failure('could not insert');
+	)) or failure('could not register user');
+	
+	$db->insert('farm_x_user', array(
+			'farm_id' => $farmId,
+			'user_id' => $userId
+	));
+	
+	$tabId = $db->insert('tab', array(
+			'farm_id' => $farmId,
+			'user_id' => $userId,
+			'balance' => "0.00"
+	));
+	
+	$db->insert('user_x_tab', array(
+			'user_id' => $userId,
+			'tab_id' => $tabId
+	));
+	
+	$response['status'] = 'success';
+	$response['data'] = array('userId' => $userId);
+	
+	return $response;
+}
+
+function link_user($userId, $farmId) {
+	checkLogin();
+	
+	$db = new mysql();
+	
+	if ($farmId !== $_SESSION['farmId'])
+		failure("can't link users to farms you don't own.");
 	
 	$db->insert('farm_x_user', array(
 			'farm_id' => $farmId,
@@ -96,9 +123,9 @@ function register_user($email, $pin) {
 	));
 	
 	$response['status'] = 'success';
-	$response['data'] = array('userId' => $userId);
+	$response['data'] = array();
 	
-	return $response;
+	return $response;	
 }
 
 function get_users($farmId) {
@@ -117,18 +144,23 @@ function get_users($farmId) {
 	$ids = "('";
 	foreach ($user_ids as $id) {
 		if ($multi)
-			$ids .= "',";
+			$ids .= "','";
 		$ids .= $id['user_id'];
 		$multi = true;
 	}
 	$ids .= "')";
-	
 			
 	$users = $db->select(array(
 		'table' => "user",
-		'fields' => "id, name, balance, img_url",
+		'fields' => "id, name, img_url",
 		'condition' => "`id` IN " . $ids
 	)) or failure('could not fetch users');
+	
+	$users['balance'] = $db->select(array(
+			'table' => "tab",
+			'fields' => "balance",
+			'condition' => "farm_id='$farmId' AND user_id='$userId'"
+	));
 			
 	$response['status'] = 'success';
 	$response['data'] = $users;
@@ -142,7 +174,7 @@ function get_balance($userId) {
 	
 	$db = new mysql();
 	
-	$bal = $db->get('user','balance', "id = $userId");
+	$bal = $db->get('tab','balance', "user_id='$userId' AND farm_id='$farmId'");
 	
 	if (!$bal)
 		failure('could not find user balance');
@@ -183,7 +215,7 @@ function process_transaction($userId, $transaction, $token) {
 	if (!checkToken($token))
 		failure('token mismatch failure');
 	
-	$currentBal = $db->get('user', 'balance', "userId=$userId");
+	$currentBal = $db->get('tab', 'balance', "user_id='$userId' AND farm_id='$farmId'");
 	
 	$newBal = $currentBal - $transaction['amount'];
 	
@@ -197,7 +229,7 @@ function process_transaction($userId, $transaction, $token) {
 					'transaction_id' => $transactionId
 	));
 	
-	$db->update('user', array('balance' => $newBal), "id=$userId");
+	$db->update('tab', array('balance' => $newBal), "user_id='$userId' AND farm_id='$farmId'");
 	
 	$response['status'] = "success";
 	$response['data'] = array('balance' => $newBal);

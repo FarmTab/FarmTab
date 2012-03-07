@@ -7,6 +7,13 @@ if (isset($_REQUEST['SESSION']) ){
 	exit(999);
 }
 
+if (isset($_GET['type']) && $_GET['type'] == 'logout') {
+	$_SESSION = array();
+    session_destroy();
+    header('Location: login');
+    exit;
+}
+
 if (!isset($_GET['api_key']) || !check_api_key($_GET['api_key'])) {
 	failure('invalid API key or API key not set');
 }

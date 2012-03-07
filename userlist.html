@@ -43,18 +43,19 @@ $.ajax({
 	success: render
 });
 
-function render(user) {
-	console.log(user);
-	$.each(user, function() {
+function render(response) {
+	console.log("Status: " + response.status);
+	console.dir(response.data);
+	$.each(response.data, function() {
+		var user = this;
 		var userId = user['id'];
 		var name = user['name'];
-		var imgurl = user['imgurl'];
+		var imgUrl = user['img_url'];
 		var balance = user['balance'];
 	
 		$('#userlist').append(
-			'<li><a href="verify.php?name=' + name +
-				'&id=' + userId + '">' +
-				'<img src="' + imgurl + '" />' +
+			'<li><a href="verify.php?id=' + userId + '">' +
+				'<img src="img/' + imgUrl + '" />' +
 				'<h3>' + name + '</h3>' +
 				'<p>' + balance + '</p>' +
 			'</a></li>'
