@@ -115,8 +115,14 @@ function link_user($userId, $farmId) {
 			'user_id' => $userId
 	));
 	
+	$db->insert('tab', array(
+			'farm_id' => $farmId,
+			'user_id' => $userId,
+			'balance' => "0.00"
+	));
+	
 	$response['status'] = 'success';
-	$response['data'] = array();
+	$response['data'] = array('message' => "inserted successfully");
 	
 	return $response;	
 }
