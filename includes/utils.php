@@ -1,13 +1,19 @@
 <?php
 
-require_once('db.php');
-
 if (isset($_REQUEST['SESSION']) ){
 	print "nope.";
 	exit(999);
 }
 
-if (isset($_GET['type']) && $_GET['type'] == 'logout') {
+if (!isset($_GET['api_key']) || !check_api_key($_GET['api_key'])) {
+	failure('invalid API key or API key not set');
+}
+
+
+
+
+
+function logout_user {
 	$_SESSION = array();
 	$params = session_get_cookie_params();
     setcookie(session_name(), '', time() - 42000,
@@ -15,15 +21,10 @@ if (isset($_GET['type']) && $_GET['type'] == 'logout') {
         $params["secure"], $params["httponly"]
     );
     session_destroy();
-    header('Location: login');
-    exit;
-}
-
-if (!isset($_GET['api_key']) || !check_api_key($_GET['api_key'])) {
-	failure('invalid API key or API key not set');
 }
 
 function check_api_key($apiKey) {
+	require_once('db.php');
 	$db = new mysql();
 	
 	return $db->get('api_clients', 'client_name', "api_key = '$apiKey'");
@@ -49,9 +50,7 @@ function setToken($userId) {
 	return $_SESSION['token'];	
 }
 
-function checkToken($token) {
-	if ($token !== $_SESSION['token'])
-		return false;
+function checkToken() {
 	if (time() - $_SESSION['token_timestamp'] > 120000) // 2 minutes timeout
 		return false;
 	return true;

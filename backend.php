@@ -12,14 +12,17 @@ header('Content-Type: application/json charset=UTF-8');
 if (isset($_GET['type'])) {
 
 	switch($_GET['type']) {
+		case 'linkuser':
+			$response = link_user($_GET['userId'],$_GET['farmId']);
+			break;
 		case 'login':
 			$response = attempt_login($_POST['email'], $_POST['password']);
 			break;
+		case 'logout':
+			$response = attempt_logout();
+			break;
 		case 'register':
 			$response = register_user($_POST['email'], $_POST['pin'], $_POST['farmId']);
-			break;
-		case 'linkuser':
-			$response = link_user($_GET['userId'],$_GET['farmId']);
 			break;
 		case 'transaction':
 			$response = process_transaction($_POST['userId'], $_POST['transaction']);
@@ -63,6 +66,18 @@ function attempt_login($email, $pass) {
 	return $response;
 }
 
+function attempt_logout() {
+
+	logout_user();
+
+	$response = array(
+    	'result' => "success",
+    	'data'   => array('message' => "logged out")
+    );
+    json_encode($response);
+    exit;
+}
+
 function register_user($email, $pin, $farmId) {
 	checkLogin();
 
@@ -80,21 +95,7 @@ function register_user($email, $pin, $farmId) {
 			'salt' => $salt
 	)) or failure('could not register user');
 	
-	$db->insert('farm_x_user', array(
-			'farm_id' => $farmId,
-			'user_id' => $userId
-	));
-	
-	$tabId = $db->insert('tab', array(
-			'farm_id' => $farmId,
-			'user_id' => $userId,
-			'balance' => "0.00"
-	));
-	
-	$db->insert('user_x_tab', array(
-			'user_id' => $userId,
-			'tab_id' => $tabId
-	));
+	setup_xtab($userId, $farmId, $db);
 	
 	$response['status'] = 'success';
 	$response['data'] = array('userId' => $userId);
@@ -102,20 +103,36 @@ function register_user($email, $pin, $farmId) {
 	return $response;
 }
 
+function setup_xtab($userId, $farmId, $db) {
+
+	$db->insert('farm_x_user', array(
+			'farm_id' => $farmId,
+			'user_id' => $userId
+	));
+	
+	$db->insert('tab', array(
+			'farm_id' => $farmId,
+			'user_id' => $userId,
+			'balance' => "0.00"
+	));
+	
+	$db->insert('user_x_tab', array(
+			'user_id' => $userId,
+			'tab_id' => 'LAST_INSERT_ID()'
+	));
+	
+	if (mysql_error())
+		failure("Couldn't insert into db: " . mysql_error());
+
+}
+
 function link_user($userId, $farmId) {
 	checkLogin();
-	
-	$db = new mysql();
 	
 	if ($farmId !== $_SESSION['farmId'])
 		failure("can't link users to farms you don't own.");
 	
-	$db->execute("INSERT INTO farm_x_user (farm_id, user_id) VALUES ($farmId, $userId)");
-	$db->execute("INSERT INTO tab (farm_id, user_id, balance) VALUES ($farmId, $userId, 0.00)");
-	$db->execute("INSERT INTO user_x_tab (user_id, tab_id) VALUES ($userId, LAST_INSERT_ID())");
-	
-	if (mysql_error())
-		failure("Couldn't insert into db: " . mysql_error());
+	setup_xtab($userId, $farmId, $db);	
 	
 	$response['status'] = 'success';
 	$response['data'] = array('message' => "inserted successfully");
@@ -148,13 +165,14 @@ function get_users($farmId) {
 function get_balance($userId) {
 	
 	checkLogin();
+	checkToken();
 	
 	$db = new mysql();
 	
 	$bal = $db->get('tab','balance', "user_id='$userId' AND farm_id='$farmId'")
 					or failure('could not find user balance');
 	
-	$response['status'] = 'success';
+	$response['status'] = "success";
 	$response['data'] = array('balance' => $bal);
 	
 	return $response;
@@ -164,6 +182,7 @@ function get_balance($userId) {
 function process_transaction($userId, $transaction) {
 	
 	checkLogin();
+	checkToken();
 		
 	$db = new mysql();
 	
@@ -175,11 +194,13 @@ function process_transaction($userId, $transaction) {
 	if ($newBal < 0)
 		failure('Balance too low to process transaction');
 		
-	$transactionId = $db->insert('transaction', $transaction);
+	$transaction_json = json_encode($transaction);
+		
+	$transactionId = $db->insert('transaction', $transaction_json);
 	
 	$db->insert('user_x_transaction', array(
 			'user_id' => $userId,
-			'transaction_id' => $transactionId
+			'transaction_id' => "LAST_INSERT_ID()"
 		));
 	
 	$db->update('tab', array('balance' => $newBal), "user_id='$userId' AND farm_id='$farmId'");
