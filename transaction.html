@@ -75,7 +75,7 @@
 $('h3').html(GET['name'] + ' <span class="balance">$' + GET['balance'] + '</span>');
 
 
-$('#modifycredit').submit(function() {
+$('#modifycredit').click(function() {
 	
 });
 
@@ -83,6 +83,7 @@ $('form[name="pay"]').submit(function() {
 	transaction['amount'] = $('input[name="amount"]').text(); // will this work? probably not .. context switch and all that
 	transaction['farm'] = farmId;
 	transaction['user'] = userId;
+	transaction['receipt_dump'] = "Updating balance through Farm Tab mobile site";
 	$.ajax({
 		url: 'backend.php?type=transaction',
 		dataType: 'json',

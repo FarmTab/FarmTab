@@ -22,7 +22,7 @@ if (isset($_GET['type'])) {
 			$response = link_user($_GET['userId'],$_GET['farmId']);
 			break;
 		case 'transaction':
-			$response = process_transaction($_POST['userId'], $_POST['transaction'], $_POST['token']);
+			$response = process_transaction($_POST['userId'], $_POST['transaction']);
 			break;
 		case 'userlist':
 			$response = get_users($_GET['farmId']);
@@ -61,12 +61,6 @@ function attempt_login($email, $pass) {
 			'farmId' => $response['id']
 	);
 	return $response;
-}
-
-function checkLogin() {
-	if (!isset($_SESSION['valid']) && $_SESSION['valid'])
-		failure('Authentication error');
-	return true;
 }
 
 function register_user($email, $pin, $farmId) {
@@ -133,15 +127,15 @@ function get_users($farmId) {
 	
 	$db = new mysql();
 	
-	$users_query =
+	$users = $db->query(
 			"SELECT user.id, user.name, user.img_url, tab.balance
 			FROM user
 			INNER JOIN farm_x_user fx
 			    ON fx.user_id = user.id
 			INNER JOIN tab
 			    ON tab.user_id = user.id AND tab.farm_id = $farmId
-			WHERE fx.farm_id = $farmId";
-	$users = $db->query($users_query, false, false);
+			WHERE fx.farm_id = $farmId"
+			, false, false);
 			
 	$response['status'] = 'success';
 	$response['data'] = $users;
@@ -155,10 +149,8 @@ function get_balance($userId) {
 	
 	$db = new mysql();
 	
-	$bal = $db->get('tab','balance', "user_id='$userId' AND farm_id='$farmId'");
-	
-	if (!$bal)
-		failure('could not find user balance');
+	$bal = $db->get('tab','balance', "user_id='$userId' AND farm_id='$farmId'")
+					or failure('could not find user balance');
 	
 	$response['status'] = 'success';
 	$response['data'] = array('balance' => $bal);
@@ -166,49 +158,27 @@ function get_balance($userId) {
 	return $response;
 }
 
-function setToken($userId) {
 
-	$agent = $_SERVER['HTTP_USER_AGENT'];
-	$agent .= 'SHIFLETT';
-
-	$token = md5($agent . secrets::TOKEN_SECRET . $userId);
-
-	$_SESSION['token_timestamp'] = time();
-	$_SESSION['token'] = $token;
-	return $_SESSION['token'];	
-}
-
-function checkToken($token) {
-	if ($token !== $_SESSION['token'])
-		return false;
-	if (time() - $_SESSION['token_timestamp'] > 120000) // 2 minutes timeout
-		return false;
-	return true;
-}
-
-
-function process_transaction($userId, $transaction, $token) {
+function process_transaction($userId, $transaction) {
 	
 	checkLogin();
-	
+		
 	$db = new mysql();
 	
-	if (!checkToken($token))
-		failure('token mismatch failure');
-	
-	$currentBal = $db->get('tab', 'balance', "user_id='$userId' AND farm_id='$farmId'");
+	$currentBal = $db->get('tab', 'balance', "user_id='$userId' AND farm_id='$farmId'")
+						or failure('could not find user balance');
 	
 	$newBal = $currentBal - $transaction['amount'];
 	
-	if ($newBal <= 0)
+	if ($newBal < 0)
 		failure('Balance too low to process transaction');
 		
 	$transactionId = $db->insert('transaction', $transaction);
 	
 	$db->insert('user_x_transaction', array(
-					'user_id' => $userId,
-					'transaction_id' => $transactionId
-	));
+			'user_id' => $userId,
+			'transaction_id' => $transactionId
+		));
 	
 	$db->update('tab', array('balance' => $newBal), "user_id='$userId' AND farm_id='$farmId'");
 	

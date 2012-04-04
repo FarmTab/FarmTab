@@ -7,6 +7,25 @@
 	<link rel="stylesheet" href="ft_mobile.css" />
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+	
+	<script type="text/javascript">
+function checkLogin(response) {
+
+	if (response.status == failure) {
+		console.log("failure: " + response.reason);
+		if (response.reason.match(/^Authentication error/g))
+			window.location = "login";
+		else if (response.reason.match(/^Could not log in/g))
+			window.location = "login";
+		else if (response.reason.match(/$PIN invalid/g))
+			// show pin prompt again
+			return;
+		else
+			alert(response.reason);
+	}
+}
+	</script>
+	
 </head> 
 <body> 
 
@@ -44,22 +63,20 @@ $.ajax({
 });
 
 function render(response) {
-	console.log("Status: " + response.status);
+	checkLogin(response);
+	
+	template = "";
 	$.each(response.data, function() {
 		var user = this;
-		var userId = user['id'];
-		var name = user['name'];
-		var imgUrl = user['img_url'];
-		var balance = user['balance'];
 	
-		$('ul').append(
-			'<li><a href="transaction?id=' + userId + '&name=' + name + '&balance=' + balance +'">' +
-				'<img src="img/' + imgUrl + '" />' +
-				'<h3>' + name + '</h3>' +
-				'<p>' + balance + '</p>' +
-			'</a></li>'
-		);
+		template +=
+			'<li><a href="transaction?id=' + user['id'] + '&name=' + user['name'] + '&balance=' + user['balance'] +'">' +
+				'<img src="img/' + user['img_url'] + '" />' +
+				'<h3>' + user['name'] + '</h3>' +
+				'<p>' + user['balance'] + '</p>' +
+			'</a></li>';
 	});
+	$('ul').append(template);
 	$('ul').listview('refresh');
 }
 </script>

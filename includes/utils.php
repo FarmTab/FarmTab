@@ -29,6 +29,34 @@ function check_api_key($apiKey) {
 	return $db->get('api_clients', 'client_name', "api_key = '$apiKey'");
 }
 
+function checkLogin() {
+	//if (!isset($_SESSION['valid']) || !$_SESSION['valid'])
+	//	failure('Authentication error');
+	return true;
+}
+
+function setToken($userId) {
+
+	session_start();
+
+	$agent = $_SERVER['HTTP_USER_AGENT'];
+	$agent .= 'SHIFLETT';
+
+	$token = md5($agent . secrets::TOKEN_SECRET . $userId);
+
+	$_SESSION['token_timestamp'] = time();
+	$_SESSION['token'] = $token;
+	return $_SESSION['token'];	
+}
+
+function checkToken($token) {
+	if ($token !== $_SESSION['token'])
+		return false;
+	if (time() - $_SESSION['token_timestamp'] > 120000) // 2 minutes timeout
+		return false;
+	return true;
+}
+
 function make_password($pass, $salt) {
 	return base64_encode(sha1($pass . $salt, true) . $salt);
 }
