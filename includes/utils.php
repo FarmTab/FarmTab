@@ -13,7 +13,7 @@ if (!isset($_GET['api_key']) || !check_api_key($_GET['api_key'])) {
 
 
 
-function logout_user {
+function logout_user() {
 	$_SESSION = array();
 	$params = session_get_cookie_params();
     setcookie(session_name(), '', time() - 42000,
