@@ -107,28 +107,15 @@ function link_user($userId, $farmId) {
 	
 	$db = new mysql();
 	
-	//if ($farmId !== $_SESSION['farmId'])
-	//	failure("can't link users to farms you don't own.");
+	if ($farmId !== $_SESSION['farmId'])
+		failure("can't link users to farms you don't own.");
 	
+	$db->execute("INSERT INTO farm_x_user (farm_id, user_id) VALUES ($farmId, $userId)");
+	$db->execute("INSERT INTO tab (farm_id, user_id, balance) VALUES ($farmId, $userId, 0.00)");
+	$db->execute("INSERT INTO user_x_tab (user_id, tab_id) VALUES ($userId, LAST_INSERT_ID())");
 	
-	if ($db->get('tab','balance', "user_id='$userId' AND farm_id='$farmId'"))
-		failure("user already linked to farm. Doing nothing");	
-	
-	$db->insert('farm_x_user', array(
-			'farm_id' => $farmId,
-			'user_id' => $userId
-	));
-	
-	$tabId = $db->insert('tab', array(
-			'farm_id' => $farmId,
-			'user_id' => $userId,
-			'balance' => "0.00"
-	));
-	
-	$db->insert('user_x_tab', array(
-			'user_id' => $userId,
-			'tab_id' => $tabId
-	));
+	if (mysql_error())
+		failure("Couldn't insert into db: " . mysql_error());
 	
 	$response['status'] = 'success';
 	$response['data'] = array('message' => "inserted successfully");
