@@ -46,12 +46,12 @@ function attempt_login($email, $pass) {
 	
 	// db function validates, no worries about injections
 	$salt = $db->get('farm', 'salt', "email=$email") or failure('Could not find farmer');
-	$hashedPass = make_password($pass, $salt);
+	$cryptedPass = make_password($pass, $salt);
 	
 	$response = $db->select(array(
 			'table' => "farm",
 			'fields' => "id",
-			'condition' => "email=$email AND pass=$hashedPass"
+			'condition' => "email=$email AND pass=$cryptedPass"
 		)) or failure('Could not log in');
 	
 	
