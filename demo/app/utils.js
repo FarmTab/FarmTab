@@ -114,7 +114,7 @@ define( ['jquery' ],
 
                 var serviceUrl = "http://m.farmtab.com/backend.php?",
                         apiKey = "124df26asdf",
-                        farmId = '1', // should retrieve eventually!!
+                        farmId = '1'; // should retrieve eventually!!
                      
                 if ( searchType == 'customers' || searchType == undefined ) {
 
