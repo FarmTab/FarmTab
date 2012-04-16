@@ -17,8 +17,7 @@ require(
         function( require, _, Backbone, $ ) {
             // framework loaded
             require(
-                    ['require', 'jquerymobile', 'json2', 'datepicker', 'datepickermobile',
-                        'app'],
+                    ['require', 'jquerymobile', 'json2', 'app'],
                     function( require ) {
                         
                          // Global overrides to disable hashchange listening
@@ -28,8 +27,6 @@ require(
                     
                         $.mobile.hashListeningEnabled = false;
                         $.mobile.pushStateEnabled = false;
-                        $.mobile.page.prototype.options.degradeInputs.date = true;
-                        $( '#date-min, #date-max' ).datepicker();
 
                     } );
         } );
