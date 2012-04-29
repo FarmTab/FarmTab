@@ -112,22 +112,15 @@ define( ['jquery' ],
 
             utils.fetchResults = function( searchType, query, sort, page ) {
 
-                var serviceUrl = "http://m.farmtab.com/backend.php?",
-                        apiKey = "124df26asdf",
-                        farmId = '1'; // should retrieve eventually!!
+                var serviceUrl = "http://m.farmtab.com/backend.php?api_key=124df26asdf";
+                    serviceUrl += "&type=" + searchType;
                      
-                if ( searchType == 'customers' || searchType == undefined ) {
-
-                    quantity = $( '#slider' ).val() || mobileSearch.defaults.resultsPerPage;
-
-                    serviceUrl += "&type=userlist" + "&farmId=" + farmId + "&api_key=" + apiKey;
-
-                } else if ( searchType == 'transaction' ) {
-                    serviceUrl += "&type=transaction&userId=" + userId + "&transaction=" + encodeURIComponent(transaction) + "&api_key=" + apiKey;
+               	if ( searchType == 'transaction' ) {
+                    serviceUrl +=  "&userId=" + userId + "&transaction=" + encodeURIComponent(transaction);
                 }
 
 
-                return $.ajax( serviceUrl, { dataType: "json" } );
+                return $.getJSON( serviceUrl );
             };
 
 
