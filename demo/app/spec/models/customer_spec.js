@@ -11,8 +11,8 @@ describe("Customer", function() {
   });
   
   it ("should throw an error when no name has been added", function() {
-  	customer.save();
-  	
+  	errors = customer.validate();
+  	expect(errors).toEqual("Customer name not set");
   });
   
   it("should have an email", function() {

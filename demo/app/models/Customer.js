@@ -13,6 +13,7 @@ define( ['backbone'],
             			this.balance = this.previous('balance');
             			return "Customer balance cannot be negative";
             		}
+            		return '';
             	},
             	           
             	defaults: {
@@ -21,6 +22,11 @@ define( ['backbone'],
             	},
             	
             	initialize: function() {
+            		Backbone.Model.prototype.initialize.apply(this, arguments);
+				    var error = this.validate(this.attributes);
+				    if (error) {
+				      this.trigger('error', this, error);
+				    }            	
             		console.log("created user: " + this.get('name'));
             		
             		this.bind("change:balance", function(){
