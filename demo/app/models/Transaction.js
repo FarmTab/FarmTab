@@ -33,5 +33,5 @@ define( ['backbone'],
             	}
             } );
 
-            return Customer;
+            return Transaction;
         } );

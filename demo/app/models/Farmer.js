@@ -18,5 +18,5 @@ define( ['backbone'],
             	}
             } );
 
-            return Customer;
+            return Farmer;
         } );
