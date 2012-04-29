@@ -1,8 +1,13 @@
 /*!
- * Flickly - Backbone jQuery Mobile demo
- * http://addyosmani.com
- * Copyright (c) 2011 Addy Osmani
+ * FarmTab - A mobile tab system
+ * 
+ * Uses modified backbone.js for correct jQuery Mobile routing
+ * Copyright (c) 2011 Addy Osmani http://addyosmani.com
  * Dual licensed under the MIT and GPL licenses.
+ *
+ *
+ * by Adam Krebs
+ * Spring 2012
  *
  */
 define( ['backbone', 'views/appview', 'routers/workspace', 'utils', 'ui'],
