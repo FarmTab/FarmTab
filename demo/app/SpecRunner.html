@@ -18,7 +18,7 @@
   <script type="text/javascript" src="spec/models/farmer_spec.js"></script>
 
   <!-- include library files here... -->
-  <script data-main="main" type="text/javascript" src="libs/require/require-1.0.2.min.js"></script>
+  <script type="text/javascript" src="libs/require/require-1.0.2.min.js"></script>
   
   <!-- include source files here -->
   <script type="text/javascript" src="app.js"></script>
@@ -29,29 +29,64 @@
 
   <script type="text/javascript">
     (function() {
-      var jasmineEnv = jasmine.getEnv();
-      jasmineEnv.updateInterval = 1000;
+    
+      require.config({
+        paths: {
+          'backbone':         'libs/AMDbackbone-0.5.3',
+          'underscore':       'libs/underscore-1.2.2',
+          'text':             'libs/require/text',
+          'jquery':           'libs/jquery-1.7.1',
+          'json2':            'libs/json2',
+          'datepicker':       'libs/jQuery.ui.datepicker',
+          'datepickermobile': 'libs/jquery.ui.datepicker.mobile',
+          'jquerymobile':     'libs/jquery.mobile-1.0'
+        },
+        baseUrl: ''
+	    });
+	    
+	    
+	    require(
+        ['require', 'underscore', 'backbone', 'jquery'],
+        function( require, _, Backbone, $ ) {
+            // framework loaded
+            require(
+                    ['require', 'jquerymobile', 'json2', 'app'],
+                    function( require ) {
+                        
+                         // Global overrides to disable hashchange listening
+                         // (as opposed to using urlHistory.listeningEnabled)
+                         // This makes it easier to focus on using Backbone's own
+                         // routing:
+                    
+                        $.mobile.hashListeningEnabled = false;
+                        $.mobile.pushStateEnabled = false;
+                        
+                        var jasmineEnv = jasmine.getEnv();
+                        jasmineEnv.updateInterval = 1000;
+                  
+                        var trivialReporter = new jasmine.TrivialReporter();
+                  
+                        jasmineEnv.addReporter(trivialReporter);
+                  
+                        jasmineEnv.specFilter = function(spec) {
+                          return trivialReporter.specFilter(spec);
+                        };
+                  
+                        var currentWindowOnload = window.onload;
+                  
+                        window.onload = function() {
+                          if (currentWindowOnload) {
+                            currentWindowOnload();
+                          }
+                          execJasmine();
+                        };
+                  
+                        function execJasmine() {
+                          jasmineEnv.execute();
+                        }
 
-      var trivialReporter = new jasmine.TrivialReporter();
-
-      jasmineEnv.addReporter(trivialReporter);
-
-      jasmineEnv.specFilter = function(spec) {
-        return trivialReporter.specFilter(spec);
-      };
-
-      var currentWindowOnload = window.onload;
-
-      window.onload = function() {
-        if (currentWindowOnload) {
-          currentWindowOnload();
-        }
-        execJasmine();
-      };
-
-      function execJasmine() {
-        jasmineEnv.execute();
-      }
+                    } );
+        } );
 
     })();
   </script>
