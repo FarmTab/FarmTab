@@ -8,25 +8,15 @@
 
   <link rel="stylesheet" type="text/css" href="libs/jasmine-1.1.0/jasmine.css">
   <script type="text/javascript" src="libs/jasmine-1.1.0/jasmine.js"></script>
-  <script type="text/javascript" src="libs/jasmine-1.1.0/jasmine-html.js"></script>
-  <script type="text/javascript" src="libs/sinon-1.3.1.js"></script>
-  
-  <!-- include spec files here... -->
+  <script type="text/javascript" src="libs/jasmine-1.1.0/jasmine-html.js"></script>  
+  <!-- spec files. -->
   <script type="text/javascript" src="spec/app_spec.js"></script>
   <script type="text/javascript" src="spec/collections/farm_spec.js"></script>
   <script type="text/javascript" src="spec/models/customer_spec.js"></script>
   <script type="text/javascript" src="spec/models/farmer_spec.js"></script>
 
-  <!-- include library files here... -->
   <script type="text/javascript" src="libs/require/require-1.0.2.min.js"></script>
   
-  <!-- include source files here -->
-  <script type="text/javascript" src="app.js"></script>
-  <script type="text/javascript" src="models/Farmer.js"></script>
-  <script type="text/javascript" src="models/Customer.js"></script>
-  <script type="text/javascript" src="collections/Farm.js"></script>
-  
-
   <script type="text/javascript">
     (function() {
     
@@ -37,8 +27,7 @@
           'text':             'libs/require/text',
           'jquery':           'libs/jquery-1.7.1',
           'json2':            'libs/json2',
-          'datepicker':       'libs/jQuery.ui.datepicker',
-          'datepickermobile': 'libs/jquery.ui.datepicker.mobile',
+          'sinon':            'libs/sinon-1.3.1.js',
           'jquerymobile':     'libs/jquery.mobile-1.0'
         },
         baseUrl: ''
@@ -46,47 +35,46 @@
 	    
 	    
 	    require(
-        ['require', 'underscore', 'backbone', 'jquery'],
-        function( require, _, Backbone, $ ) {
-            // framework loaded
-            require(
-                    ['require', 'jquerymobile', 'json2', 'app'],
-                    function( require ) {
-                        
-                         // Global overrides to disable hashchange listening
-                         // (as opposed to using urlHistory.listeningEnabled)
-                         // This makes it easier to focus on using Backbone's own
-                         // routing:
-                    
-                        $.mobile.hashListeningEnabled = false;
-                        $.mobile.pushStateEnabled = false;
-                        
-                        var jasmineEnv = jasmine.getEnv();
-                        jasmineEnv.updateInterval = 1000;
-                  
-                        var trivialReporter = new jasmine.TrivialReporter();
-                  
-                        jasmineEnv.addReporter(trivialReporter);
-                  
-                        jasmineEnv.specFilter = function(spec) {
-                          return trivialReporter.specFilter(spec);
-                        };
-                  
-                        var currentWindowOnload = window.onload;
-                  
-                        window.onload = function() {
-                          if (currentWindowOnload) {
-                            currentWindowOnload();
-                          }
-                          execJasmine();
-                        };
-                  
-                        function execJasmine() {
-                          jasmineEnv.execute();
-                        }
+        ['require', 'underscore', 'backbone', 'jquery', 'jquerymobile', 'json2', 'models/Customer', 'models/Farmer', 'collections/Farm'],
+        function( require, _, Backbone, $, jqm, json2, Customer, Farmer, Farm ) {
+        
+            window.Customer = Customer;
+            window.Farmer   = Farmer;
+            window.Farm     = Farm;
+            
+            console.dir(Farm);
+            
+            //Farmer f = new Farmer();
+            //f.set({name: 'bob'});
+            //alert(f.get('name'));
+            
+            alert("loaded");
+        } 
+      );
+      
+      var jasmineEnv = jasmine.getEnv();
+      jasmineEnv.updateInterval = 1000;
 
-                    } );
-        } );
+      var trivialReporter = new jasmine.TrivialReporter();
+
+      jasmineEnv.addReporter(trivialReporter);
+
+      jasmineEnv.specFilter = function(spec) {
+        return trivialReporter.specFilter(spec);
+      };
+
+      var currentWindowOnload = window.onload;
+
+      window.onload = function() {
+        if (currentWindowOnload) {
+          currentWindowOnload();
+        }
+        execJasmine();
+      };
+
+      function execJasmine() {
+        jasmineEnv.execute();
+      }
 
     })();
   </script>

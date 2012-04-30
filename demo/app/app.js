@@ -27,10 +27,7 @@ define( ['backbone', 'views/appview', 'routers/workspace', 'utils', 'ui'],
                 utils: utils,
                 ui: ui,
                 defaults:{
-                    resultsPerPage: 32,
-                    safeSearch: 2,
-                    maxDate:'',
-                    minDate:'01/01/1970'
+                    resultsPerPage: 32
                 }
             }
 

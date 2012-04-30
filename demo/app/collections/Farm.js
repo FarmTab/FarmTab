@@ -7,9 +7,9 @@ define( ['jquery', 'backbone', 'models/Customer'],
       model: Customer
     } );
     
-    listCustomers: function() {
-      return this.filter(function(customer){ return customer.get('farmId'); });
-    }
+    //listCustomers: function() {
+    //  return this.filter(function(customer){ return customer.get('farmId'); });
+    //}
 
     return Farm;
 } );

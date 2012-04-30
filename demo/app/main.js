@@ -9,7 +9,7 @@ require.config( {
         'datepickermobile': 'libs/jquery.ui.datepicker.mobile',
         'jquerymobile':     'libs/jquery.mobile-1.0'
     },
-    baseUrl: ''
+    baseUrl: 'app'
 } );
 
 require(
