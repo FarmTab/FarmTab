@@ -2,18 +2,38 @@ define( ['backbone'],
   function( Backbone ) {
       // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
       "use strict";
+      
+      
+      function validate_pin(pin) {
+        if (pin === undefined)
+          return "Customer PIN must be set";
+        if (pin.length < 4 || pin.length > 8)
+          return "PIN must be between 4 and 8 digits";
+        return '';
+      }
+      
+      function validate_name(name) {
+        if (name === undefined)
+          return "Customer name not set";
+        return '';
+      }
+      
+      function validate_balance(balance) {
+        if (attribs.balance < 0) {
+          this.balance = this.previous('balance');
+          return "Customer balance cannot be negative";
+        }
+        return '';
+      }
+      
 
       var Customer = Backbone.Model.extend( {
         validate: function(attribs) {
-          if (attribs.name === undefined)
-            return "Customer name not set";
-          if (attribs.pin === undefined)
-            return "Customer PIN not set";
-          if (attribs.balance < 0) {
-            this.balance = this.previous('balance');
-            return "Customer balance cannot be negative";
-          }
-          return '';
+          var out = '';
+          out += validate_pin(attribs.pin);
+          out += validate_name(attribs.name);
+          out += validate_balance(attribs.balance);        
+          return out;
         },
       	           
       	defaults: {
