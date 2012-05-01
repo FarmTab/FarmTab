@@ -19,7 +19,7 @@ define( ['backbone'],
       }
       
       function validate_balance(balance) {
-        if (attribs.balance < 0) {
+        if (balance < 0) {
           this.balance = this.previous('balance');
           return "Customer balance cannot be negative";
         }

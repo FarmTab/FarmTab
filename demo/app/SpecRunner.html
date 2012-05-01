@@ -35,45 +35,40 @@
 	    
 	    
 	    require(
-        ['require', 'underscore', 'backbone', 'jquery', 'jquerymobile', 'json2', 'models/Customer', 'models/Farmer', 'collections/Farm'],
-        function( require, _, Backbone, $, jqm, json2, Customer, Farmer, Farm ) {
+        ['require', 'underscore', 'backbone', 'jquery'],
+        function( require, _, Backbone, $) {
         
-            //window.Customer = Customer;
-            //window.Farmer   = Farmer;
-            //window.Farm     = Farm;
+        require(
+          ['jquerymobile', 'json2', 'models/Customer', 'models/Farmer', 'collections/Farm'],
+          function ( jqm, json2, Customer, Farmer, Farm ) {
+        
+            window.Customer = Customer;
+            window.Farmer   = Farmer;
+            window.Farm     = Farm;
             
             console.dir(Farm);
             
             var f = new Farmer();
             f.set({name: 'bob'});
             alert(f.get('name'));
-            
-        } 
-      );
+
+            var jasmineEnv = jasmine.getEnv();
+            jasmineEnv.updateInterval = 1000;
+          
+            var trivialReporter = new jasmine.TrivialReporter();
+          
+            jasmineEnv.addReporter(trivialReporter);
+          
+            jasmineEnv.specFilter = function(spec) {
+              return trivialReporter.specFilter(spec);
+            };
+          
+            jasmineEnv.execute();
+
+          });
+        });
       
-      var jasmineEnv = jasmine.getEnv();
-      jasmineEnv.updateInterval = 1000;
 
-      var trivialReporter = new jasmine.TrivialReporter();
-
-      jasmineEnv.addReporter(trivialReporter);
-
-      jasmineEnv.specFilter = function(spec) {
-        return trivialReporter.specFilter(spec);
-      };
-
-      var currentWindowOnload = window.onload;
-
-      window.onload = function() {
-        if (currentWindowOnload) {
-          currentWindowOnload();
-        }
-        execJasmine();
-      };
-
-      function execJasmine() {
-        jasmineEnv.execute();
-      }
 
     })();
   </script>
