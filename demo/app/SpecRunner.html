@@ -38,17 +38,16 @@
         ['require', 'underscore', 'backbone', 'jquery', 'jquerymobile', 'json2', 'models/Customer', 'models/Farmer', 'collections/Farm'],
         function( require, _, Backbone, $, jqm, json2, Customer, Farmer, Farm ) {
         
-            window.Customer = Customer;
-            window.Farmer   = Farmer;
-            window.Farm     = Farm;
+            //window.Customer = Customer;
+            //window.Farmer   = Farmer;
+            //window.Farm     = Farm;
             
             console.dir(Farm);
             
-            //Farmer f = new Farmer();
-            //f.set({name: 'bob'});
-            //alert(f.get('name'));
+            var f = new Farmer();
+            f.set({name: 'bob'});
+            alert(f.get('name'));
             
-            alert("loaded");
         } 
       );
       
