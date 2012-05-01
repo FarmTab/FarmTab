@@ -1,16 +1,8 @@
-define( ['backbone'],
-  function( Backbone ) {
+define( ['backbone', 'underscore', 'utils'],
+  function( Backbone, _, utils ) {
       // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
       "use strict";
       
-      
-      function validate_pin(pin) {
-        if (pin === undefined)
-          return "Customer PIN must be set";
-        if (pin.length < 4 || pin.length > 8)
-          return "PIN must be between 4 and 8 digits";
-        return '';
-      }
       
       function validate_name(name) {
         if (name === undefined)
@@ -28,12 +20,15 @@ define( ['backbone'],
       
 
       var Customer = Backbone.Model.extend( {
+        validates: { required: ['name'] },
+        errors:    {},
+      
         validate: function(attribs) {
-          var out = '';
-          out += validate_pin(attribs.pin);
-          out += validate_name(attribs.name);
-          out += validate_balance(attribs.balance);        
-          return out;
+          this.errors = utils.Validate(this, attribs);
+        
+          if (!_.isEmpty(this.errors)) {
+            return this.errors;
+          }
         },
       	           
       	defaults: {
@@ -43,14 +38,12 @@ define( ['backbone'],
       	
       	initialize: function() {
       		Backbone.Model.prototype.initialize.apply(this, arguments);
-    	    var error = this.validate(this.attributes);
-    	    if (error) {
-    	      this.trigger('error', this, error);
-    	    }            	
+    	    
       		console.log("created user: " + this.get('name'));
       		
       		this.bind("change:balance", function(){
             var balance = this.get("balance");
+            this.validate();
             console.log('User balance updated to ' + balance);
           });
       		

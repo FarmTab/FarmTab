@@ -5,11 +5,11 @@ define( ['jquery', 'backbone'],
 
             var Workspace = Backbone.Router.extend( {
                 routes: {
-                	"customers":					  "customers",     // #customers
-                    "transaction/:id":                "transaction",   // #transaction/458
-                    "transaction/:id/confirm":        "pinrequest",    // #transaction/458/confirm
-                    "customers/:id":                  "info",          // #customers/931
-                    "":								  "root"           // main page
+                	"customers":					           "customers",     // #customers
+                    "transaction/:id":             "transaction",   // #transaction/458
+                    "transaction/:id/confirm":     "pinrequest",    // #transaction/458/confirm
+                    "customers/:id":               "info",          // #customers/931
+                    "":								             "root"           // main page
                 },
                 customers: function() {
                 	mobileSearch.utils.dfdQuery( 'customers', mobileSearch.views.appview);
