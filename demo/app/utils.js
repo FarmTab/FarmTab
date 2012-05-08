@@ -26,20 +26,20 @@ define( ['jquery', 'underscore', 'backbone' ],
   
               $.when( utils.fetchResults( searchType, id, transaction ) )
                   .then( $.proxy( function( response ) {
-  
+                  
                       ctx.setView( searchType );
     
                       if ( searchType == 'userlist' || searchType == undefined ) {
   
                           users = response.data;
                           
-                          ctx.result_view.collection.reset( users );
+                          ctx.customer_list_view.collection.reset( users );
   
                           // switch to search results view
                           utils.changePage( "#listviewusers", "slide", false, false );
   
                           // update title
-                          utils.switchTitle( query + ' (Page ' + page + ' of ' + response.photos.total + ')' );
+                          utils.switchTitle( "Showin yo farm" );
   
                       }
                       else {
@@ -209,7 +209,7 @@ define( ['jquery', 'underscore', 'backbone' ],
   
 			  return (function() {
 			    this.errors = {};
-			    this.attributes = _.clone(model.attributes);
+	/*		    this.attributes = _.clone(model.attributes);
 			    _.extend(this.attributes, changedAttributes);
 			    _.each(model.validates, function(value, rule) {
 			      this.validators[rule](value);
@@ -224,14 +224,14 @@ define( ['jquery', 'underscore', 'backbone' ],
 			        });
 			      }
 			    };
-			
+/// not ready for primetime		
 			    this.addError = function(field, message) {
 			      if (_.isUndefined(this.errors[field])) {
 			        this.errors[field] = [];
 			      }
 			      this.errors[field].push(message);
 			    };
-			
+	*/		
 			    return this.errors;
 			  })();
 			};

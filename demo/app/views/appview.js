@@ -9,7 +9,7 @@ define( ['jquery', 'backbone', 'utils', 'views/customer_list', 'views/user_page'
 
                 setView: function( option ) {
                     if ( option == 'userlist' ) {
-                        this.result_view = new CustomerList;
+                        this.customer_list_view = new CustomerList;
                     }
                     else {
                         this.user_view = new UserPage;

@@ -4,7 +4,10 @@ define( ['jquery', 'backbone', 'models/Customer'],
     "use strict";
     
     var Farm = Backbone.Collection.extend( {
-      model: Customer
+      model: Customer,
+      parse: function (response) {
+	  return response;
+      }
     } );
     
     //listCustomers: function() {

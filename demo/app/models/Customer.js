@@ -32,8 +32,7 @@ define( ['backbone', 'underscore', 'utils'],
         },
       	           
       	defaults: {
-      		balance: 0.00,
-      		imgSrc: 'placeholder.jpg'
+      		balance: 0.00
       	},
       	
       	initialize: function() {

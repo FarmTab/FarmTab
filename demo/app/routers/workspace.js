@@ -12,7 +12,7 @@ define( ['jquery', 'backbone'],
                     "":								             "root"           // main page
                 },
                 customers: function() {
-                	mobileSearch.utils.dfdQuery( 'customers', mobileSearch.views.appview);
+                	mobileSearch.utils.dfdQuery( 'userlist', mobileSearch.views.appview);
                 },
                 transaction: function( id ) {
                     mobileSearch.utils.dfdQuery( 'transaction', mobileSearch.views.appview, id );

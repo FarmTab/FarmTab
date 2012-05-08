@@ -3,10 +3,11 @@ define( ['jquery', 'backbone', 'underscore', 'collections/Farm', 'text!templates
             // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
             "use strict";
 
-            var Farm = Backbone.View.extend( {
+            var CustomerList = Backbone.View.extend( {
                 el: $( "#listviewholder" ),
 
                 initialize: function() {
+                    console.log('hi');
                     this.collection = new Farm;
                     _.bindAll(this, "renderList");
                     this.collection.bind( "reset", this.renderList );
@@ -29,5 +30,5 @@ define( ['jquery', 'backbone', 'underscore', 'collections/Farm', 'text!templates
                 }
             } );
 
-            return Farm;
+            return CustomerList;
         });
