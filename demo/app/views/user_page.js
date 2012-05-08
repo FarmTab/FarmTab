@@ -4,7 +4,7 @@ define( ['jquery', 'backbone', 'underscore', 'models/Customer', 'text!templates/
             "use strict";
 
             var UserList = Backbone.View.extend( {
-                el: $( "#listviewholder" ),
+                el: $( "#userview" ),
 
                 initialize: function() {
                     this.collection = new Customer;
@@ -30,4 +30,4 @@ define( ['jquery', 'backbone', 'underscore', 'models/Customer', 'text!templates/
             } );
 
             return UserList;
-        } );
+} );

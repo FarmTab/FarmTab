@@ -13,67 +13,46 @@ define( ['jquery', 'underscore', 'backbone' ],
             //            'photo' for individual photo entries
             // ctx: String
             //            The context (view) for which the requests are being made
-            // query: String
-            //            The query-string to lookup. For search this is a keyword or set of
-            //            keywords in string form, for photos this refers to the photo ID
-            // sort: String
-            //            How the results returned should be sorted. All of the Flickr API sort
-            //            modes are supported here
-            // page: Integer
-            //            The pagination index currently being queried. e.g 2 refers to page 2. 
+            // id: Integer
+            //            The id associated with the record (if applicable)
+            // transaction: String
+            //            A JSON-formatted transaction string (if applicable)
 
-            utils.dfdQuery = function( searchType, ctx, query, sort, page ) {
+            utils.dfdQuery = function( searchType, ctx, id, transaction ) {
 
-                if(!(query==undefined || query == "")){
-
-                    var entries = null;
-                    page = (page == undefined) ? 1 : page;
-
-                    utils.loadPrompt( 'Fetching information...' );
-
-                    $.when( utils.fetchResults( searchType, query, sort, page ) )
-                            .then( $.proxy( function( response ) {
-
-                                ctx.setView( searchType );
-
-                                // The application can handle routes that come in
-                                // through a bookmarked URL differently if needed
-                                // simply check against workspace.bookmarkMode
-                                // e.g if(!mobileSearch.routers.workspace.bookmarkMode) etc.
-
-                                if ( searchType == 'search' || searchType == undefined ) {
-
-                                    entries = response.photos.photo;
-
-                                    mobileSearch.routers.workspace.q = query;
-                                    mobileSearch.routers.workspace.p = page;
-                                    mobileSearch.routers.workspace.s = sort;
-
-                                    $( '.search-meta p' ).html( 'Page: ' + response.photos.page + ' / ' + response.photos.pages );
-                                    
-                                    ctx.result_view.collection.reset( entries );
-
-                                    // switch to search results view
-                                    utils.changePage( "#search", "slide", false, false );
-
-                                    // update title
-                                    utils.switchTitle( query + ' (Page ' + page + ' of ' + response.photos.total + ')' );
-
-                                }
-                                else {
-
-                                    entries = response.photo;
-                                    ctx.farm_view.collection.reset( entries );
-
-                                    // switch to the individual photo viewer
-                                    utils.changePage( "#photo", "slide", false, false );
-                                     
-                                }
-
-                    }, ctx ) );
-                }else{
-                    utils.loadPrompt( 'Please enter a valid search query.' );
-                }
+              var entries = null;
+  
+              utils.loadPrompt( 'Fetching information...' );
+  
+              $.when( utils.fetchResults( searchType, id, transaction ) )
+                  .then( $.proxy( function( response ) {
+  
+                      ctx.setView( searchType );
+    
+                      if ( searchType == 'userlist' || searchType == undefined ) {
+  
+                          users = response.data;
+                          
+                          ctx.result_view.collection.reset( users );
+  
+                          // switch to search results view
+                          utils.changePage( "#listviewusers", "slide", false, false );
+  
+                          // update title
+                          utils.switchTitle( query + ' (Page ' + page + ' of ' + response.photos.total + ')' );
+  
+                      }
+                      else {
+  
+                          entries = response.photo;
+                          ctx.farm_view.collection.reset( entries );
+  
+                          // switch to the individual photo viewer
+                          utils.changePage( "#photo", "slide", false, false );
+                           
+                      }
+  
+              }, ctx ) );
             };
 
 
@@ -97,29 +76,27 @@ define( ['jquery', 'underscore', 'backbone' ],
             // summary:
             //            Query for search results or individual photos from the Flickr API
             // searchType: String
-            //            The type of search to conduct. Maps to backend.php GET['type'] param
-            // query: String
-            //            The query-string to lookup. For search this is a keyword or set of
-            //            keywords in string form, for photos this refers to the photo ID
-            // sort: String
-            //            How the results returned should be sorted. All of the Flickr API sort
-            //            modes are supported here
-            // page: Integer
-            //            The pagination index currently being queried. e.g 2 refers to page 2. 
+            //            The type of search to conduct. All of the Farmtab API type
+            //            modes are supported here (maps to backend.php GET['type'] param)
+            // id: Integer
+            //            The id associated with the record (if applicable)
+            // transaction: String
+            //            A JSON-formatted transaction string (if applicable)
             // returns:
             //            A promise for the ajax call to be completed
 
-            utils.fetchResults = function( searchType, extras ) {
+            utils.fetchResults = function( searchType, id, transaction ) {
 
-                var serviceUrl = "http://m.farmtab.com/backend.php?api_key=124df26asdf";
+                var serviceUrl =  "http://farmtab.com/API/backend.php?api_key=124df26asdf";
                     serviceUrl += "&type=" + searchType;
                      
                	if ( searchType == 'transaction' ) {
-                    serviceUrl +=  "&userId=" + extras.userId + "&transaction=" + encodeURIComponent(transaction);
+                    serviceUrl +=  "&userId=" + id + "&transaction=" + encodeURIComponent(transaction);
+                } else if (searchType == 'linkuser') {
+                    serviceUrl +=  "&userId=" + id;
                 }
 
-
-                return $.getJSON( serviceUrl );
+                return $.getJSON( serviceUrl, { "transaction": transaction} );
             };
 
 
@@ -196,12 +173,12 @@ define( ['jquery', 'underscore', 'backbone' ],
             //            The query-string to lookup. For search this is a keyword or set of
             //            keywords in string form, for photos this refers to the photo ID
             // sortType: String
-            //            How the results returned should be sorted. All of the Flickr API sort
+            //            How the results returned should be sorted. All of the Farmtab API sort
             //            modes are supported here
-            // page: Integer
-            //            The pagination index currently being queried. e.g 2 refers to page 2
+            // id: Integer
+            //            The id associated with the record (if applicable)
 
-            utils.queryConstructor = function( query, sortType, page ) {
+            utils.queryConstructor = function( query, sortType, id, transaction ) {
                 return 'search/' + query + '/s' + sortType + '/p' + page;
             };
 

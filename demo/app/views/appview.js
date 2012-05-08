@@ -8,7 +8,7 @@ define( ['jquery', 'backbone', 'utils', 'views/customer_list', 'views/user_page'
                 el: $( "#appview" ),
 
                 setView: function( option ) {
-                    if ( option == 'search' ) {
+                    if ( option == 'userlist' ) {
                         this.result_view = new CustomerList;
                     }
                     else {

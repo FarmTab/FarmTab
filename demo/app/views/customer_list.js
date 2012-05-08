@@ -1,5 +1,5 @@
 define( ['jquery', 'backbone', 'underscore', 'collections/Farm', 'text!templates/_user_list_item.html'],
-        function( $, Backbone, _, Farm, _user_list_item ) {
+        function( $, Backbone, _, Farm, user_list_item ) {
             // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
             "use strict";
 
@@ -14,7 +14,7 @@ define( ['jquery', 'backbone', 'underscore', 'collections/Farm', 'text!templates
 
                 renderList: function() {
 
-                    var compiled_template = _.template( _user_list_item ),
+                    var compiled_template = _.template( user_list_item ),
                         collection = this.collection,
                         $el = $(this.el);
 
