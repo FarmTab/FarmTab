@@ -1,5 +1,5 @@
-define( ['backbone'], 
-  function( Backbone ) {
+define( ['backbone', 'utils'], 
+  function( Backbone, utils ) {
     // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
     "use strict";
 

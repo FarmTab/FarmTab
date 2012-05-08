@@ -24,7 +24,7 @@ define( ['backbone', 'underscore', 'utils'],
         errors:    {},
       
         validate: function(attribs) {
-          this.errors = utils.Validate(this, attribs);
+          this.errors = Backbone.Validate(this, attribs);
         
           if (!_.isEmpty(this.errors)) {
             return this.errors;

@@ -1,5 +1,5 @@
-define( ['jquery', 'underscore' ],
-        function( $, _ ) {
+define( ['jquery', 'underscore', 'backbone' ],
+        function( $, _, Backbone ) {
             // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
             //"use strict";
             var utils = {};
@@ -228,7 +228,7 @@ define( ['jquery', 'underscore' ],
             // changedAttributes: Array
             //            The attributes of the model that have changed
             
-            utils.Validate = function(model, changedAttributes) {
+            Backbone.Validate = function(model, changedAttributes) {
   
 			  return (function() {
 			    this.errors = {};
