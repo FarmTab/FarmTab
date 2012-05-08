@@ -43,7 +43,7 @@ define( ['backbone', 'underscore', 'utils'],
       		
       		this.bind("change:balance", function(){
             var balance = this.get("balance");
-            this.validate();
+            validate_balance(); // do something with this??
             console.log('User balance updated to ' + balance);
           });
       		

@@ -1,5 +1,5 @@
-define( ['jquery', 'backbone', 'underscore', 'models/Customer', 'text!templates/userview.html'],
-        function( $, Backbone, _ , Farm, photoTemplate) {
+define( ['jquery', 'backbone', 'underscore', 'models/Customer', 'text!templates/user_page.html'],
+        function( $, Backbone, _ , Customer, user_page) {
             // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
             "use strict";
 
@@ -7,14 +7,14 @@ define( ['jquery', 'backbone', 'underscore', 'models/Customer', 'text!templates/
                 el: $( "#listviewholder" ),
 
                 initialize: function() {
-                    this.collection = new Farm;
+                    this.collection = new Customer;
                     _.bindAll(this, "renderList");
                     this.collection.bind( "reset", this.renderList );
                 },
 
                 renderList: function( collection ) {
 
-                    var compiled_template = _.template(listTemplate),
+                    var compiled_template = _.template(user_page),
                         collection = this.collection,
                         $el = $(this.el);
 
