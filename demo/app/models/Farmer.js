@@ -4,7 +4,7 @@ define( ['backbone', 'utils'],
     "use strict";
 
     var Farmer = Backbone.Model.extend( {
-      validates: { required: ['name'] },
+      validates: { required: ['name', 'id'] },
       errors:    {},
     
       validate: function(attribs) {
@@ -16,7 +16,7 @@ define( ['backbone', 'utils'],
       },
     	
     	initialize: function() {
-        console.log("created farmer: " + this.get('name'));
+        console.log("created farmer: " + this.get('name') + "(" + this.get('id') + ")");
     		
         this.bind("error", function(model, error){
           console.log("User model error: " + error);

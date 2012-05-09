@@ -3,31 +3,18 @@ define( ['jquery', 'backbone', 'underscore', 'models/Customer', 'text!templates/
             // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
             "use strict";
 
-            var UserList = Backbone.View.extend( {
-                el: $( "#userview" ),
+            var UserPage = Backbone.View.extend( {
+                $el: $( "#userview" ),
 
                 initialize: function() {
-                    this.collection = new Customer;
-                    _.bindAll(this, "renderList");
-                    this.collection.bind( "reset", this.renderList );
-                },
-
-                renderList: function( collection ) {
-
                     var compiled_template = _.template(user_page),
-                        collection = this.collection,
-                        $el = $(this.el);
+                        model = this.model;
 
                     FarmTab.utils.loadPrompt( "Loading user..." );
-                    $( '#photo .ui-title' ).html( 'User view' );
-                    $el.html( compiled_template( { results: collection.models } ) );
-
-                    setTimeout( function() {
-                        $el.listview('refresh');
-                    }, 0 );
-
+                    $( '#user .ui-title' ).text( model.get('name') );
+                    $el.html( compiled_template( { user : model } ) );
                 }
             } );
 
-            return UserList;
+            return UserPage;
 } );

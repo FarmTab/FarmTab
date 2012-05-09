@@ -1,5 +1,5 @@
-define( ['jquery', 'underscore', 'backbone' ],
-        function( $, _, Backbone ) {
+define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
+        function( $, _, Backbone, UserPage, Farm ) {
             // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
             //"use strict";
             var utils = {};
@@ -8,52 +8,53 @@ define( ['jquery', 'underscore', 'backbone' ],
             // summary:
             //            Manage passing search queries to the necessary handlers and the UI
             //            changes that are required based on query-type.
-            // searchType: String
-            //            The type of search to conduct. Supports 'search' for results or
+            // queryType: String
+            //            The type of query to conduct. Supports 'search' for results or
             //            'photo' for individual photo entries
             // ctx: String
             //            The context (view) for which the requests are being made
             // id: Integer
             //            The id associated with the record (if applicable)
-            // transaction: String
-            //            A JSON-formatted transaction string (if applicable)
+            // payload: Object
+            //            A JSON-object (if applicable) to send as POSTDATA. Defaults to an empty object
 
-            utils.dfdQuery = function( searchType, ctx, id, transaction ) {
+            utils.dfdQuery = function( queryType, ctx, id, payload ) {
 
+              payload = payload || {};
               var entries = null;
   
               utils.loadPrompt( 'Fetching information...' );
+
+              if (queryType == 'info') {
+                utils.changePage( "#user", "slide", false, false );
+                new UserPage({ model : FarmTab.current_farm.get(id) });
+                return false;
+              }
+
+
+              if (queryType == "" || queryType == undefined ) queryType = 'userlist';
   
-              $.when( utils.fetchResults( searchType, id, transaction ) )
+              $.when( utils.fetchResults( queryType, id, payload ) )
                   .then( $.proxy( function( response ) {
                   
-                      ctx.setView( searchType );
+                      ctx.setView( queryType );
     
-                      if ( searchType == 'userlist' || searchType == undefined ) {
+                      if ( queryType == 'login') {
+                          FarmTab.current_farmer = new Farmer(response.data);
+                      }
+                      else if ( queryType == 'userlist' ) {
   
-                          users = response.data;
+                          users = response.data.users;
                           
-                          ctx.customer_list_view.collection.reset( users );
+                          FarmTab.current_farmer.current_farm.reset( users );
+                          ctx.customer_list_view.collection = FarmTab.current_farm;
   
                           // switch to search results view
                           utils.changePage( "#listviewusers", "slide", false, false );
   
                           // update title
-                          utils.switchTitle( "Showin yo farm" );
+                          utils.switchTitle( FarmTab.current_farmer.get("name") );
   
-                      }
-                      else if (searchType == 'info') {
-  
-                          entries = response.photo;
-                          ctx.farm_view.collection.reset( entries );
-  
-                          // switch to the individual photo viewer
-                          utils.changePage( "#photo", "slide", false, false );
-                          
-                      }
-                      else {
-                          console.log("I have no fucking clue where you are. " + searchType);
-                          FarmTab.utils.dfdQuery( 'userlist', FarmTab.views.appview);
                       }
   
               }, ctx ) );
@@ -79,28 +80,27 @@ define( ['jquery', 'underscore', 'backbone' ],
 
             // summary:
             //            Query for search results or individual photos from the Flickr API
-            // searchType: String
-            //            The type of search to conduct. All of the Farmtab API type
+            // queryType: String
+            //            The type of query to conduct. All of the Farmtab API type
             //            modes are supported here (maps to backend.php GET['type'] param)
             // id: Integer
             //            The id associated with the record (if applicable)
-            // transaction: String
-            //            A JSON-formatted transaction string (if applicable)
+            // payload: Object
+            //            A JSON-object (if applicable) to send as POSTDATA
             // returns:
             //            A promise for the ajax call to be completed
 
-            utils.fetchResults = function( searchType, id, transaction ) {
+            utils.fetchResults = function( queryType, id, payload ) {
 
-                var serviceUrl =  "http://farmtab.com/API/backend.php?api_key=124df26asdf";
-                    serviceUrl += "&type=" + searchType;
+                var serviceUrl =  "http://farmtab.com/API/backend.php?";
+                    serviceUrl += "api_key=" + FarmTab.mobile_api_key;
+                    serviceUrl += "&type=" + queryType;
                      
-               	if ( searchType == 'transaction' ) {
-                    serviceUrl +=  "&userId=" + id + "&transaction=" + encodeURIComponent(transaction);
-                } else if (searchType == 'linkuser') {
+               	if ( queryType == 'transaction' || queryType == 'linkuser') {
                     serviceUrl +=  "&userId=" + id;
                 }
 
-                return $.getJSON( serviceUrl, { "transaction": transaction} );
+                return $.getJSON( serviceUrl, payload );
             };
 
 

@@ -7,8 +7,7 @@ define( ['jquery', 'backbone', 'underscore', 'models/Farm', 'text!templates/_use
                 el: $( "#listviewholder" ),
 
                 initialize: function() {
-                    console.log('hi');
-                    this.collection = new Farm;
+                    this.collection = FarmTab.current_farm || new Farm; // NUR FOR TEST. TODO get rid of this by making login work
                     _.bindAll(this, "renderList");
                     this.collection.bind( "reset", this.renderList );
                 },

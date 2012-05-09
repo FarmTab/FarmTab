@@ -1,19 +1,4 @@
-<% _.each( results, function( user, i ){ %>
+    <img alt="<%= user.get('name')._content  %>" title="<%= user.get('name')._content  %>" src="http://farmtab.com/<%= user.get('img_url') %>"/>
 
-        <img alt="<%= user.get('name')._content  %>" title="<%= user.get('name')._content  %>" src="http://farmtab.com/<%= user.get('img_url') %>"/>
-
-    <ul data-role="listview" data-inset="true">
-        <li><span class="key">Title:</span> <%= user.get("title")._content %></li>
-        <li><span class="key">Description:</span> <%= user.get("description")._content %></li>
-        <li><span class="key">Views:</span> <%= user.get("views") %></li>
-        <li><span class="key">Location:</span> <%= user.get("owner").location %></li>
-        <li><span class="key">Taken by:</span> <%= user.get("owner").realname %></li>
-        <li><span class="key">Date taken:</span> <%= user.get("dates").taken %></li>
-        <li><span class="key">Date uploaded:</span> <%= new Date( user.get("dateuploaded") * 1000).toDateString() %></li>
-        <li class="ext"><iframe src="http://www.facebook.com/plugins/like.php?href=<%= user.get("urls").url[0]._content %>&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=true&amp;action=like&amp;colorscheme=light&amp;font&amp;height=80&amp;appId=160332214053450" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:80px;" allowTransparency="true"></iframe></li>
-         <li class="ext"><a class="external_link" href="<%= user.get("urls").url[0]._content %>">View Original On Flickr.com</a></li>
-
-         
-    </ul>
-
-<% }); %>
+    <li><span class="key">Name:</span> <%= user.get("title")._content %></li>
+    <li><span class="key">Balance:</span> <span class="balance"><%= user.get("balance")._content %></span></li>

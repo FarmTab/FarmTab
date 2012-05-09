@@ -6,9 +6,11 @@ define( ['jquery', 'backbone'],
             var Workspace = Backbone.Router.extend( {
                 routes: {
                 	  "customers":					         "customers",     // #customers
+                    "customers/:id":               "info",          // #customers/931
+                    "login":                       "farmer_login",  // #login
                     "transaction/:id":             "transaction",   // #transaction/458
                     "transaction/:id/confirm":     "pinrequest",    // #transaction/458/confirm
-                    "customers/:id":               "info",          // #customers/931
+                    "register":                    "register",      // #register
                     "":								             "root"           // main page
                 },
                 customers: function() {
@@ -17,12 +19,19 @@ define( ['jquery', 'backbone'],
                 transaction: function( id ) {
                     FarmTab.utils.dfdQuery( 'transaction', FarmTab.views.appview, id );
                 },
+                farmer_login: function() {
+                    utils.changePage( "#farmer_login", "slide", false, false );
+                    new LoginView({model: new Farmer()});
+                },
                 pinrequest: function ( id ) {
                   	console.log('requesting pin for ' + id);
                   	FarmTab.utils.dfdQuery( 'pinrequest',  FarmTab.views.appview, id )
                 },
                 info: function ( id ) {
                     FarmTab.utils.dfdQuery( 'info', FarmTab.views.appview, id );
+                },
+                register: function ( id ) {
+                    FarmTab.utils.dfdQuery( 'register', FarmTab.views.appview, id );
                 },
                 root: function() {
                     FarmTab.utils.changePage( "#index", "slide", false, false );

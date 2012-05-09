@@ -5,14 +5,11 @@ define( ['jquery', 'backbone', 'models/Customer'],
     
     var Farm = Backbone.Collection.extend( {
       model: Customer,
-      parse: function (response) {
-	      return response;
+      name: "",
+      parse: function (customers) {
+	      return customers;
       }
     } );
-    
-    //listCustomers: function() {
-    //  return this.filter(function(customer){ return customer.get('farmId'); });
-    //}
 
     return Farm;
 } );

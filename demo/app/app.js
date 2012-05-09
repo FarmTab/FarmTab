@@ -10,14 +10,16 @@
  * Spring 2012
  *
  */
-define( ['backbone', 'views/appview', 'routers/workspace', 'utils', 'ui'],
-        function( Backbone, AppView, Workspace, utils, ui ) {
+define( ['backbone', 'views/appview', 'routers/workspace', 'models/Farmer', 'models/Farm', 'utils', 'ui'],
+        function( Backbone, AppView, Workspace, Farmer, Farm, utils, ui ) {
             // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
             "use strict";
            
            $(function(){
             
             window.FarmTab = window.FarmTab || {
+                current_farmer: null,
+                mobile_api_key: "124df26asdf",
                 views: {
                     appview: new AppView
                 },
@@ -31,8 +33,11 @@ define( ['backbone', 'views/appview', 'routers/workspace', 'utils', 'ui'],
                 }
             }
 
-
-            window.Farmtab.utils.toggleNavigation( false );
+            // DEBUG:::
+            window.FarmTab.current_farmer = new Farmer({id: 2, name: "Johnny K"});
+            window.FarmTab.current_farm   = new Farm;
+            // /debug
+            window.FarmTab.utils.toggleNavigation( false );
             Backbone.history.start();
         });
 
