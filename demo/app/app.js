@@ -17,7 +17,7 @@ define( ['backbone', 'views/appview', 'routers/workspace', 'utils', 'ui'],
            
            $(function(){
             
-            window.mobileSearch = window.mobileSearch || {
+            window.FarmTab = window.FarmTab || {
                 views: {
                     appview: new AppView
                 },
@@ -32,7 +32,7 @@ define( ['backbone', 'views/appview', 'routers/workspace', 'utils', 'ui'],
             }
 
 
-            window.mobileSearch.utils.toggleNavigation( false );
+            window.Farmtab.utils.toggleNavigation( false );
             Backbone.history.start();
         });
 

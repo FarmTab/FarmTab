@@ -19,8 +19,8 @@ define( ['jquery', 'backbone', 'underscore', 'models/Farm', 'text!templates/_use
                         collection = this.collection,
                         $el = $(this.el);
 
-                    mobileSearch.utils.loadPrompt( "Loading results..." );
-                    mobileSearch.utils.toggleNavigation( true );
+                    FarmTab.utils.loadPrompt( "Loading results..." );
+                    FarmTab.utils.toggleNavigation( true );
                     $el.html( compiled_template( { results: collection.models } ) );
 
                     setTimeout( function() {

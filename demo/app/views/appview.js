@@ -8,11 +8,15 @@ define( ['jquery', 'backbone', 'utils', 'views/customer_list', 'views/user_page'
                 el: $( "#appview" ),
 
                 setView: function( option ) {
-                    if ( option == 'userlist' ) {
+                    switch(option) {
+                      case 'userlist':
                         this.customer_list_view = new CustomerList;
-                    }
-                    else {
+                        break;
+                      case 'info':
                         this.user_view = new UserPage;
+                        break;
+                      default:
+                        console.error("should never reach this: " + option);
                     }
                 }
             } );

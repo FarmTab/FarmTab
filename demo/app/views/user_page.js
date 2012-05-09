@@ -18,7 +18,7 @@ define( ['jquery', 'backbone', 'underscore', 'models/Customer', 'text!templates/
                         collection = this.collection,
                         $el = $(this.el);
 
-                    mobileSearch.utils.loadPrompt( "Loading user..." );
+                    FarmTab.utils.loadPrompt( "Loading user..." );
                     $( '#photo .ui-title' ).html( 'User view' );
                     $el.html( compiled_template( { results: collection.models } ) );
 

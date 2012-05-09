@@ -5,27 +5,27 @@ define( ['jquery', 'backbone'],
 
             var Workspace = Backbone.Router.extend( {
                 routes: {
-                	"customers":					           "customers",     // #customers
+                	  "customers":					         "customers",     // #customers
                     "transaction/:id":             "transaction",   // #transaction/458
                     "transaction/:id/confirm":     "pinrequest",    // #transaction/458/confirm
                     "customers/:id":               "info",          // #customers/931
                     "":								             "root"           // main page
                 },
                 customers: function() {
-                	mobileSearch.utils.dfdQuery( 'userlist', mobileSearch.views.appview);
+                	  FarmTab.utils.dfdQuery( 'userlist', FarmTab.views.appview);
                 },
                 transaction: function( id ) {
-                    mobileSearch.utils.dfdQuery( 'transaction', mobileSearch.views.appview, id );
+                    FarmTab.utils.dfdQuery( 'transaction', FarmTab.views.appview, id );
                 },
                 pinrequest: function ( id ) {
-                	alert('requesting pin for ' + id);
-                	mobileSearch.utils.dfdQuery( 'pinrequest',  mobileSearch.views.appview, id )
+                  	console.log('requesting pin for ' + id);
+                  	FarmTab.utils.dfdQuery( 'pinrequest',  FarmTab.views.appview, id )
                 },
                 info: function ( id ) {
-                    mobileSearch.utils.dfdQuery( 'info', mobileSearch.views.appview, id );
+                    FarmTab.utils.dfdQuery( 'info', FarmTab.views.appview, id );
                 },
                 root: function() {
-                    mobileSearch.utils.changePage( "#index", "slide", false, false );
+                    FarmTab.utils.changePage( "#index", "slide", false, false );
                 }
             } );
 

@@ -1,6 +1,6 @@
 <% _.each( results, function( user, i ){ %>
 
-        <img alt="<%= user.get("title")._content  %>" title="<%= user.get("title")._content  %>" src="<%= 'http://farm' + user.get("farm") + '.static.flickr.com/' + user.get("server") + '/' + user.get("id") + '_' + user.get("secret") + '_m.jpg' %>"/>
+        <img alt="<%= user.get('name')._content  %>" title="<%= user.get('name')._content  %>" src="http://farmtab.com/<%= user.get('img_url') %>"/>
 
     <ul data-role="listview" data-inset="true">
         <li><span class="key">Title:</span> <%= user.get("title")._content %></li>

@@ -6,7 +6,7 @@ define( ['jquery', 'backbone', 'models/Customer'],
     var Farm = Backbone.Collection.extend( {
       model: Customer,
       parse: function (response) {
-	  return response;
+	      return response;
       }
     } );
     

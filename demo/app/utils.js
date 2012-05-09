@@ -42,14 +42,18 @@ define( ['jquery', 'underscore', 'backbone' ],
                           utils.switchTitle( "Showin yo farm" );
   
                       }
-                      else {
+                      else if (searchType == 'info') {
   
                           entries = response.photo;
                           ctx.farm_view.collection.reset( entries );
   
                           // switch to the individual photo viewer
                           utils.changePage( "#photo", "slide", false, false );
-                           
+                          
+                      }
+                      else {
+                          console.log("I have no fucking clue where you are. " + searchType);
+                          FarmTab.utils.dfdQuery( 'userlist', FarmTab.views.appview);
                       }
   
               }, ctx ) );
@@ -123,9 +127,9 @@ define( ['jquery', 'underscore', 'backbone' ],
                 var sortQuery,
                     hashQuery = "", pageQuery = 0, increment = 0;
 
-                (mobileSearch.routers.workspace.q == undefined) ? hashQuery = '' : hashQuery = mobileSearch.routers.workspace.q;
-                (mobileSearch.routers.workspace.p == undefined) ? pageQuery = 1 : pageQuery = mobileSearch.routers.workspace.p;
-                (mobileSearch.routers.workspace.s == undefined) ? sortQuery = 'relevance' : sortQuery = mobileSearch.routers.workspace.s;
+                (FarmTab.routers.workspace.q == undefined) ? hashQuery = '' : hashQuery = FarmTab.routers.workspace.q;
+                (FarmTab.routers.workspace.p == undefined) ? pageQuery = 1 : pageQuery = FarmTab.routers.workspace.p;
+                (FarmTab.routers.workspace.s == undefined) ? sortQuery = 'relevance' : sortQuery = FarmTab.routers.workspace.s;
 
                 pageQuery = parseInt( pageQuery );
                 (state == 'next') ? pageQuery += 1 : pageQuery -= 1;
@@ -190,8 +194,8 @@ define( ['jquery', 'underscore', 'backbone' ],
             //            A boolean that decides whether the navigation should be toggled on or off.
 
             utils.toggleNavigation = function( toggleState ) {
-                mobileSearch.ui.nextOption.toggle( toggleState );
-                mobileSearch.ui.prevOption.toggle( toggleState );
+                FarmTab.ui.nextOption.toggle( toggleState );
+                FarmTab.ui.prevOption.toggle( toggleState );
             };
             
             

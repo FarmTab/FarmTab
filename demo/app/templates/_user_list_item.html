@@ -1,8 +1,10 @@
 <% _.each( results, function( user, i ){ %>
   <li>
     <a data-ajax="false" href="#customers/<%= user.get('id') %>">
-      <img  src="http://farmtab.com/images/users/<%= user.get('img_url') %>"/>
-      <h3><%= user.get("name") %></h3>
+      <img src="http://farmtab.com/images/users/<%= user.get('img_url') %>"/>
+      <h3><%= user.get('name') %></h3>
+      <p><%= user.get('balance') %></p>
     </a>
  </li>
+
 <% }); %>
