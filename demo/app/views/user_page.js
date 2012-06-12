@@ -4,15 +4,16 @@ define( ['jquery', 'backbone', 'underscore', 'models/Customer', 'text!templates/
             "use strict";
 
             var UserPage = Backbone.View.extend( {
-                $el: $( "#userview" ),
+                el: $( "#userview" ),
 
                 initialize: function() {
                     var compiled_template = _.template(user_page),
-                        model = this.model;
+                        model = this.model,
+                        $el   = $el = $(this.el);
 
                     FarmTab.utils.loadPrompt( "Loading user..." );
                     $( '#user .ui-title' ).text( model.get('name') );
-                    $el.html( compiled_template( { user : model } ) );
+                    $el.html( compiled_template( { customer : model } ) );
                 }
             } );
 

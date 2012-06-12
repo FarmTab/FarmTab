@@ -34,8 +34,9 @@ define( ['backbone', 'views/appview', 'routers/workspace', 'models/Farmer', 'mod
             }
 
             // DEBUG:::
-            window.FarmTab.current_farmer = new Farmer({id: 2, name: "Johnny K"});
-            window.FarmTab.current_farm   = new Farm;
+            console.log("time to make the dougnuts");
+            window.FarmTab.current_farmer = window.FarmTab.current_farmer || new Farmer({id: 2, name: "Johnny K"});
+            window.FarmTab.current_farm   = window.FarmTab.current_farm   || new Farm;
             // /debug
             window.FarmTab.utils.toggleNavigation( false );
             Backbone.history.start();

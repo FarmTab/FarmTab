@@ -27,7 +27,7 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
 
               if (queryType == 'info') {
                 utils.changePage( "#user", "slide", false, false );
-                new UserPage({ model : FarmTab.current_farm.get(id) });
+                new UserPage({ model : utils.getCustomer(id) });
                 return false;
               }
 
@@ -46,7 +46,7 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
   
                           users = response.data.users;
                           
-                          FarmTab.current_farmer.current_farm.reset( users );
+                          FarmTab.current_farm.reset( users );
                           ctx.customer_list_view.collection = FarmTab.current_farm;
   
                           // switch to search results view
@@ -54,7 +54,10 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
   
                           // update title
                           utils.switchTitle( FarmTab.current_farmer.get("name") );
-  
+                      }
+                      else if (queryType == 'userinfo') {
+                        utils.changePage( "#user", "slide", false, false );
+                        new UserPage({ model : new Customer(response.user) });
                       }
   
               }, ctx ) );
@@ -134,8 +137,6 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
                 pageQuery = parseInt( pageQuery );
                 (state == 'next') ? pageQuery += 1 : pageQuery -= 1;
 
-                (pageQuery < 1) ? utils.changePage( "/", "slide" ) : location.hash = utils.queryConstructor( hashQuery, sortQuery, pageQuery );
-
             };
 
 
@@ -171,19 +172,23 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
 
 
             // summary:
-            //            Construct a search query for processing
-            //
-            // query: String
-            //            The query-string to lookup. For search this is a keyword or set of
-            //            keywords in string form, for photos this refers to the photo ID
-            // sortType: String
-            //            How the results returned should be sorted. All of the Farmtab API sort
-            //            modes are supported here
-            // id: Integer
-            //            The id associated with the record (if applicable)
+            //            Get Customer models associated with the farm or query the API if we don't have any
+            // returns Customer
+            //            The customer associated with the id
 
-            utils.queryConstructor = function( query, sortType, id, transaction ) {
-                return 'search/' + query + '/s' + sortType + '/p' + page;
+            utils.getCustomer = function( id ) {
+                if (FarmTab.current_farm == undefined || FarmTab.current_farm.get(id) == undefined) {
+                                        
+                      $.when( utils.fetchResults( 'userlist', id, {} ) )
+                        .then( $.proxy( function( response ) {
+                            users = response.data.users;
+                            FarmTab.current_farm.reset( users );
+                        }, FarmTab.views.appview) );
+                        
+                  }
+                  
+              return FarmTab.current_farm.get(id);
+                
             };
 
 
