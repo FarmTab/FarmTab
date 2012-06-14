@@ -5,7 +5,7 @@ define( ['backbone'],
 
             var Transaction = Backbone.Model.extend( {
 
-              url: "API/type=transaction",
+              url: "API/backend.php?type=transaction",
 
               validate: function(attribs) {
                 if (attribs.isWithdrawal === undefined)

@@ -5,7 +5,7 @@ define( ['backbone', 'underscore', 'utils'],
 
       var Customer = Backbone.Model.extend( {
 
-        url: "API/backend.php?type=",
+        url: "API/backend.php?type=customer",
   
         defaults: {
           balance: 0.00
@@ -14,9 +14,16 @@ define( ['backbone', 'underscore', 'utils'],
         initialize: function() {
           Backbone.Model.prototype.initialize.apply(this, arguments);
           
-          this.bind("change:balance", function(){
-            var balance = this.get("balance");
-            console.log('User balance updated to ' + balance);
+          this.bind("change:balance", function( amount, is_purchase ){
+
+            if (is_purchase)
+              if (this.get("balance") - amount < 0) {
+                this.set("balance", this.previous("balance"), {silent: true});
+                this.trigger("error", "Balance can't be negative");
+              }
+
+            updateBal(amount, is_purchase);
+            console.log('User balance updated to ' + this.get("balance"));
           });
           
           this.bind("error", function(model, error){
@@ -29,9 +36,9 @@ define( ['backbone', 'underscore', 'utils'],
           bal = this.get('balance');
         
           if (is_purchase) {
-            this.save({ balance: bal - amount });
+            this.save( { balance: bal - amount }, {silent: true} );
           } else {
-            this.save({ balance: bal + amount});
+            this.save( { balance: bal + amount }, {silent: true} );
           }
         }
       } );
