@@ -5,8 +5,6 @@ require.config( {
         'text':             'libs/require/text',
         'jquery':           'libs/jquery-1.7.1',
         'json2':            'libs/json2',
-        'datepicker':       'libs/jQuery.ui.datepicker',
-        'datepickermobile': 'libs/jquery.ui.datepicker.mobile',
         'jquerymobile':     'libs/jquery.mobile-1.0'
     },
     baseUrl: 'app'
@@ -27,6 +25,10 @@ require(
                     
                         $.mobile.hashListeningEnabled = false;
                         $.mobile.pushStateEnabled = false;
+                        $.mobile.orientationChangeEnabled = false;
 
+                        document.cookie = "api_key=" + FarmTab.mobile_api_key
+                              + "; path=/; domain=.farmtab.com; "
+                              + document.cookie;
                     } );
         } );

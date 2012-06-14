@@ -82,7 +82,29 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
 
 
             // summary:
-            //            Query for search results or individual photos from the Flickr API
+            //            Call the logout route of the API, destroys the session on the server-side
+
+            utils.doLogout = function() {
+                $.get("API/type=logout", function() {
+                  FarmTab.utils.changePage( "#index", "slide", false, false );
+                });
+            }
+
+
+            // summary:
+            //           check pin for user
+
+            utils.checkPin = function( user_id, test_pin ) {
+                console.log("requesting pin for " + user_id);
+
+                $.post("API/type=validate", function(response) {
+                  return response.status == "success";
+                });
+            }
+
+
+            // summary:
+            //            Query for search results or individual photos from the Farmtab API
             // queryType: String
             //            The type of query to conduct. All of the Farmtab API type
             //            modes are supported here (maps to backend.php GET['type'] param)
@@ -96,7 +118,6 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
             utils.fetchResults = function( queryType, id, payload ) {
 
                 var serviceUrl =  "http://farmtab.com/API/backend.php?";
-                    serviceUrl += "api_key=" + FarmTab.mobile_api_key;
                     serviceUrl += "&type=" + queryType;
                      
                	if ( queryType == 'transaction' || queryType == 'linkuser') {
@@ -105,19 +126,6 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
 
                 return $.getJSON( serviceUrl, payload );
             };
-
-
-            // summary:
-            //            Format dates so that they're compatible with input passed through
-            //            the datepicker component
-            // date: String
-            //            The date string to be formatted
-            // returns:
-            //            A formatted date
-            utils.dateFormatter = function ( dateStr ) {
-                return (dateStr == undefined)? '' : $.datepicker.formatDate( '@', new Date( dateStr ) );
-            };
-
 
             // summary:
             //            Manage the URL construction and navigation for pagination
@@ -168,27 +176,6 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
             //            The title to update the view with
             utils.switchTitle = function( title ) {
                 $( '.ui-title' ).text( title || "" );
-            };
-
-
-            // summary:
-            //            Get Customer models associated with the farm or query the API if we don't have any
-            // returns Customer
-            //            The customer associated with the id
-
-            utils.getCustomer = function( id ) {
-                if (FarmTab.current_farm == undefined || FarmTab.current_farm.get(id) == undefined) {
-                                        
-                      $.when( utils.fetchResults( 'userlist', id, {} ) )
-                        .then( $.proxy( function( response ) {
-                            users = response.data.users;
-                            FarmTab.current_farm.reset( users );
-                        }, FarmTab.views.appview) );
-                        
-                  }
-                  
-              return FarmTab.current_farm.get(id);
-                
             };
 
 

@@ -5,6 +5,7 @@ define( ['jquery', 'backbone', 'models/Customer'],
     
     var Farm = Backbone.Collection.extend( {
       model: Customer,
+      url: "API/backend.php?type=userlist",
       name: "",
       parse: function (customers) {
 	      return customers;
