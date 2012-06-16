@@ -33,6 +33,13 @@ define( ['backbone', 'views/appview', 'routers/workspace', 'models/Farmer', 'mod
                 }
             }
 
+
+						if (document.cookie.indexOf("api") == -1) {
+							document.cookie = "api_key=" + FarmTab.mobile_api_key
+                              + "; path=/; domain=.farmtab.com; "
+                              + document.cookie;
+						}
+
             // DEBUG:::
             console.log("time to make the dougnuts");
             window.FarmTab.current_farmer = window.FarmTab.current_farmer || new Farmer({id: 2, name: "Johnny K"});

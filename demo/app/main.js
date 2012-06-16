@@ -15,8 +15,8 @@ require(
         function( require, _, Backbone, $ ) {
             // framework loaded
             require(
-                    ['require', 'jquerymobile', 'json2', 'app'],
-                    function( require ) {
+                    ['require', 'jquerymobile', 'app'],
+                    function( require, jqm, app ) {
                         
                          // Global overrides to disable hashchange listening
                          // (as opposed to using urlHistory.listeningEnabled)
@@ -27,8 +27,5 @@ require(
                         $.mobile.pushStateEnabled = false;
                         $.mobile.orientationChangeEnabled = false;
 
-                        document.cookie = "api_key=" + FarmTab.mobile_api_key
-                              + "; path=/; domain=.farmtab.com; "
-                              + document.cookie;
                     } );
         } );

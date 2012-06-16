@@ -5,10 +5,12 @@ define( ['jquery', 'backbone', 'models/Customer'],
     
     var Farm = Backbone.Collection.extend( {
       model: Customer,
-      url: "API/backend.php?type=userlist",
+      url: "http://farmtab.com/API/backend.php?type=farm",
       name: "",
-      parse: function (customers) {
-	      return customers;
+      parse: function (response) {
+        this.id   = response.data.id;
+        this.name = response.data.name;
+        return response.data.users;
       }
     } );
 

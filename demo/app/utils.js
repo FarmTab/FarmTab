@@ -64,6 +64,17 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
             };
 
 
+						// summary:
+						//            Show the customer list
+
+						utils.showCustomerList = function(ctx) {
+							FarmTab.current_farm.fetch();
+							ctx.setView( 'userlist' );
+							utils.changePage( "#listviewusers", "slide", false, false );
+							utils.switchTitle( FarmTab.current_farm.get("name") );
+						}
+
+
             // summary:
             //            A convenience method for accessing $mobile.changePage(), included
             //            in case any other actions are required in the same step.

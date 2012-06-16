@@ -14,7 +14,7 @@ define( ['jquery', 'backbone'],
                     "":                            "root"           // main page
                 },
                 customers: function() {
-                    FarmTab.utils.dfdQuery( 'userlist', FarmTab.views.appview);
+                    FarmTab.utils.showCustomerList( FarmTab.views.appview );
                 },
                 transaction: function( id ) {
                     FarmTab.utils.dfdQuery( 'transaction', FarmTab.views.appview, id );
@@ -25,7 +25,7 @@ define( ['jquery', 'backbone'],
                 },
                 farmer_logout: function() {
                     FarmTab.utils.do_logout();
-                }
+                },
                 pinrequest: function ( id ) {
                     console.log('requesting pin for ' + id);
                     FarmTab.utils.dfdQuery( 'pinrequest',  FarmTab.views.appview, id )
