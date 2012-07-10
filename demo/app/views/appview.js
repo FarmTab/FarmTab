@@ -7,13 +7,13 @@ define( ['jquery', 'backbone', 'utils', 'views/customer_list', 'views/user_page'
             var AppView = Backbone.View.extend( {
                 el: $( "#appview" ),
 
-                setView: function( option ) {
+                setView: function( option, id ) {
                     switch(option) {
                       case 'userlist':
                         this.customer_list_view = new CustomerList;
                         break;
                       case 'info':
-                        this.user_view = new UserPage;
+                        this.user_view = new UserPage({ model : FarmTab.current_farm.get(id) });
                         break;
                       default:
                         console.error("should never reach this: " + option);

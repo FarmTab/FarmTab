@@ -6,6 +6,10 @@ define( ['jquery', 'backbone', 'underscore', 'models/Farm', 'text!templates/_use
             var CustomerList = Backbone.View.extend( {
                 el: $( "#listviewholder" ),
 
+								events: {
+									"click li": "showUserPage"
+								},
+
                 initialize: function() {
                     this.collection = FarmTab.current_farm || new Farm; // NUR FOR TEST. TODO get rid of this by making login work
                     _.bindAll(this, "renderList");
@@ -26,7 +30,11 @@ define( ['jquery', 'backbone', 'underscore', 'models/Farm', 'text!templates/_use
                        $el.listview('refresh');
                     }, 0 );
 
-                }
+                },
+
+								showUserPage: function(id) {
+									
+								}
             } );
 
             return CustomerList;

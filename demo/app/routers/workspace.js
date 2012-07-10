@@ -14,7 +14,10 @@ define( ['jquery', 'backbone'],
                     "":                            "root"           // main page
                 },
                 customers: function() {
-                    FarmTab.utils.showCustomerList( FarmTab.views.appview );
+									FarmTab.current_farm.fetch();
+									FarmTab.views.appview.setView( 'userlist' );
+									FarmTab.utils.changePage( "#listviewusers", "slide", false, false );
+									FarmTab.utils.switchTitle( FarmTab.current_farm.name );
                 },
                 transaction: function( id ) {
                     FarmTab.utils.dfdQuery( 'transaction', FarmTab.views.appview, id );
@@ -31,7 +34,13 @@ define( ['jquery', 'backbone'],
                     FarmTab.utils.dfdQuery( 'pinrequest',  FarmTab.views.appview, id )
                 },
                 info: function ( id ) {
-                    FarmTab.utils.dfdQuery( 'info', FarmTab.views.appview, id );
+                  //FarmTab.utils.dfdQuery( 'info', FarmTab.views.appview, id );
+
+									if (!FarmTab.current_farm.id)
+										FarmTab.current_farm.fetch();
+									FarmTab.views.appview.setView( 'userlist' );
+									FarmTab.utils.changePage( "#user", "slide", false, false );
+									FarmTab.utils.switchTitle( FarmTab.current_farm.get(id).get('name') );
                 },
                 register: function ( id ) {
                     FarmTab.utils.dfdQuery( 'register', FarmTab.views.appview, id );
