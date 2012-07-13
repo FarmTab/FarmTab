@@ -85,9 +85,9 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
             //            Call the logout route of the API, destroys the session on the server-side
 
             utils.doLogout = function() {
-                $.get("API/backend.php?type=logout", function() {
-                  FarmTab.utils.changePage( "#index", "slide", false, false );
-                });
+              $.get("API/backend.php?type=logout", function() {
+                FarmTab.utils.changePage( "#index", "slide", false, false );
+              });
             }
 
 
@@ -95,11 +95,11 @@ define( ['jquery', 'underscore', 'backbone', 'views/user_page', 'models/Farm' ],
             //           check pin for user
 
             utils.checkPin = function( user_id, test_pin ) {
-                console.log("requesting pin for " + user_id);
+              console.log("requesting pin for " + user_id);
 
-                $.post("API/backend.php?type=validate", function(response) {
-                  return response.status == "success";
-                });
+              $.post("API/backend.php?type=validate", function(response) {
+                return response.status == "success";
+              });
             }
 
 

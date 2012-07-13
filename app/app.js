@@ -30,8 +30,13 @@ define( ['backbone', 'views/appview', 'routers/workspace', 'models/Farmer', 'mod
                 ui: ui,
                 defaults:{
                     resultsPerPage: 32
+                },
+                logged_in: function() {
+                  return $(document.body).hasClass("logged-in");
                 }
             }
+
+            FarmTab.Broadcaster = $({});
 
 
 						if (document.cookie.indexOf("api") == -1) {

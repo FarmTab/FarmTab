@@ -3,6 +3,8 @@ define( ['jquery', 'backbone'],
             // Using ECMAScript 5 strict mode during development. By default r.js will ignore that.
             "use strict";
 
+            var __slice = [].slice;
+
             var Workspace = Backbone.Router.extend( {
                 routes: {
                     "customers":                   "customers",     // #customers
@@ -47,7 +49,44 @@ define( ['jquery', 'backbone'],
                 },
                 root: function() {
                     FarmTab.utils.changePage( "#index", "slide", false, false );
-                }
+                },
+                _register_broadcaster_event_handlers: function() {
+                    destinations = ["recipes:show", "favorites:show", "favorites:index", "daily:show", "links:show", "scenes:show", "bios:show"]
+                    for (var i=0; i < destinations.length; i++) {
+                      this._register(destinations[i]);
+                    }
+                },
+                _register: function(destination) {
+                    FarmTab.Broadcaster.bind("navigate:" + destination, function(/* event, other... */){
+                      var event, other;
+                      event = arguments[0], other = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+                      this.navigate_to(destination, other);
+                    });
+                },
+
+                  navigate_to: function() {
+                    var action, destination, go_back_to_index, id, matches, other, section, _ref;
+                    destination = arguments[0], other = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+                    _ref = destination.split(":"), section = _ref[0], action = _ref[1];
+                    destination = "" + section + "_" + action;
+                    this["build_" + destination + "_view"].apply(this, other);
+                    if (destination !== this._active_destination()) {
+                      matches = this.matching_destinations(destination);
+                      if (matches.length > 0) {
+                        go_back_to_index = this.destinations_stack.indexOf(matches[0]);
+                      }
+                      if (go_back_to_index >= 0) {
+                        this.insert_and_animate_views(this[this._active_destination()], this[destination], true);
+                        return this.destinations_stack = this.destinations_stack.slice(0, go_back_to_index + 1 || 9e9);
+                      } else {
+                        this.insert_and_animate_views(this[this._active_destination()], this[destination], false);
+                        id = other.length > 0 ? other[0].id : null;
+                        return this.destinations_stack.push([section, action, id]);
+                      }
+                    }
+                  }
+
+
             } );
 
             return Workspace;

@@ -32,8 +32,12 @@ define( ['jquery', 'backbone', 'underscore', 'models/Farm', 'text!templates/_use
 
                 },
 
-								showUserPage: function(id) {
-									
+								showUserPage: function(el) {
+									if (!FarmTab.current_farm.id)
+										FarmTab.current_farm.fetch();
+									FarmTab.views.appview.setView( 'info', el.target.id );
+									FarmTab.utils.changePage( "#user", "slide", false, false );
+									FarmTab.utils.switchTitle( FarmTab.current_farm.get(el.target.id).get('name') );
 								}
             } );
 

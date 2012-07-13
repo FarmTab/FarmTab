@@ -1,4 +1,4 @@
-DirectoryIndex userlist.html
+DirectoryIndex index.html
 <IfModule mod_rewrite.c>
    Options +FollowSymLinks
    Options +Indexes
